@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class GridCoordinates : MonoBehaviour
 {
-    public static float XOffset = 1f;
-    public static float YOffset = 1f;
-    public static float ZOffset = 1f;
+    public static float XOffset = 0.5f;
+    public static float YOffset = 1.0f;
+    public static float ZOffset = -0.5f;
 
     internal Vector3Int GetCoords() => offsetCoordinates;
 
@@ -22,9 +22,9 @@ public class GridCoordinates : MonoBehaviour
 
     private Vector3Int ConversPositionToOffset(Vector3 position)
     {
-        int x = Mathf.CeilToInt(position.x / XOffset);
-        int y = Mathf.RoundToInt(position.y / YOffset);
-        int z = Mathf.RoundToInt(position.z / ZOffset);
+        int x = Mathf.RoundToInt(position.x - XOffset);
+        int y = Mathf.RoundToInt(position.y - YOffset);
+        int z = Mathf.RoundToInt(position.z - ZOffset);
 
         return new Vector3Int(x, y, z);
     }
