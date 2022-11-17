@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2024824705909370859}
   - component: {fileID: 1370391192354094436}
   - component: {fileID: 8853969261680398676}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
@@ -76,6 +76,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridCoordinates: {fileID: 2024824705909370859}
   highlight: {fileID: 1370391192354094436}
+  TileType: 1
 --- !u!1001 &1927672680398505679
 PrefabInstance:
   m_ObjectHideFlags: 0
