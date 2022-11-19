@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Tools;
@@ -9,6 +10,9 @@ public class SelectionManager : MonoBehaviour
     private Camera mainCamera;
 
     public LayerMask selectionMask;
+
+    public Action<GameObject> OnUnitSeleced;
+    public Action<GameObject> OnTerrainSelected;
 
     private List<Vector3Int> neighbours = new List<Vector3Int>();
 
@@ -24,6 +28,11 @@ public class SelectionManager : MonoBehaviour
 
         ServiceLocator.RegisterService<SelectionManager>(this);
         playerInput.RegisterToPointerClicked(HandleClick);
+
+        var unitManager = ServiceLocator.GetService<UnitManager>();
+
+        OnUnitSeleced += unitManager.HandleUnitSelected;
+        OnTerrainSelected += unitManager.HandleTerrainSelected;
     }
 
     private void OnDestroy()
@@ -34,29 +43,22 @@ public class SelectionManager : MonoBehaviour
 
     public void HandleClick(Vector3 mousePosition)
     {
-        var grid = ServiceLocator.GetService<SquareGrid>();
+        var grid = ServiceLocator.GetService<IGrid>();
 
         if (FindTarget(mousePosition, out GameObject result))
         {
-            TileGraphics selectedTile = result.GetComponent<TileGraphics>();
-
-            selectedTile.DisableHighlight();
-
-            foreach (var neighbour in neighbours)
+            if (UnitSelected(result))
             {
-                grid.GetTileAt(neighbour).DisableHighlight();
+                OnUnitSeleced?.Invoke(result);
             }
-
-            var graphSearch = ServiceLocator.GetService<GraphSearch>();
-            BFSResult bfsResult = graphSearch.BFSGetRange(grid, selectedTile.Coords, 20);
-            neighbours = new List<Vector3Int>(bfsResult.GetRangePositions());
-
-            foreach (var neighboursPos in neighbours)
+            else
             {
-                grid.GetTileAt(neighboursPos).EnableHighlight();
+                OnTerrainSelected?.Invoke(result);
             }
         }
     }
+
+    private bool UnitSelected(GameObject result) => result.GetComponent<UnitGraphics>() != null;
 
     private bool FindTarget(Vector3 mousePosition, out GameObject result)
     {
@@ -64,7 +66,19 @@ public class SelectionManager : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, selectionMask))
         {
-            result = hit.collider.gameObject.GetComponentInParent<TileGraphics>().gameObject;
+            var hitedObject = hit.collider.gameObject;
+
+            var unitObject = hitedObject.GetComponentInParent<UnitGraphics>();
+
+            if (unitObject == null)
+            {
+                result = hitedObject.GetComponentInParent<TileGraphics>().gameObject;
+            }
+            else
+            {
+                result = unitObject.gameObject;
+            }
+
             return true;
         }
 

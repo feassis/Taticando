@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,5 +35,15 @@ public class TileGraphics : MonoBehaviour
     public void DisableHighlight()
     {
         highlight.ToggleGlow(false);
+    }
+
+    public void ResetHightlight()
+    {
+        highlight.ResetGlowHighlight();
+    }
+
+    public void HighlightPath()
+    {
+        highlight.HighlightValidPath();
     }
 }
