@@ -10,7 +10,7 @@ public class SquareGrid : MonoBehaviour, IGrid
 
     private void Awake()
     {
-        ServiceLocator.RegisterService<SquareGrid>(this);
+        ServiceLocator.RegisterService<IGrid>(this);
     }
 
     private void Start()
@@ -54,7 +54,13 @@ public class SquareGrid : MonoBehaviour, IGrid
 
     private void OnDestroy()
     {
-        ServiceLocator.DeregisterService<SquareGrid>();
+        ServiceLocator.DeregisterService<IGrid>();
+    }
+
+    public Vector3Int GetClosestTile(Vector3 worldPosition)
+    {
+        worldPosition.y = 0;
+        return GridCoordinates.ConversPositionToOffset(worldPosition);
     }
 }
 
@@ -75,4 +81,5 @@ public interface IGrid
 {
    TileGraphics GetTileAt(Vector3Int coordinates);
    List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate);
+    Vector3Int GetClosestTile(Vector3 worldPosition);
 }

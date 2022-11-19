@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdfed3e70a56c9b40bb8de21b7d5b613, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowMaterial: {fileID: 2100000, guid: a1d2cef4b47c727458611ad219250654, type: 2}
+  glowMaterial: {fileID: 2100000, guid: de633d6c1748e2443bdff543159c9bb0, type: 2}
   isGlowing: 0
 --- !u!114 &8853969261680398676
 MonoBehaviour:

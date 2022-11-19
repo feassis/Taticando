@@ -20,7 +20,7 @@ public class GridCoordinates : MonoBehaviour
         gameObject.name = $"Tile - (x: {offsetCoordinates.x},y: {offsetCoordinates.y},z: {offsetCoordinates.z})";
     }
 
-    private Vector3Int ConversPositionToOffset(Vector3 position)
+    public static Vector3Int ConversPositionToOffset(Vector3 position)
     {
         int x = Mathf.RoundToInt(position.x - XOffset);
         int y = Mathf.RoundToInt(position.y - YOffset);

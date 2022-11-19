@@ -14,9 +14,15 @@ public class GlowHighlight : MonoBehaviour
 
     [SerializeField] private bool isGlowing = false;
 
+    private Color validSpaceColor = Color.green;
+    private Color originalGlowColor;
+
+    private const string glowReference = "_GlowColor";
+
     private void Awake()
     {
         PrepareMaterialDictionaries();
+        originalGlowColor = glowMaterial.GetColor(glowReference);
     }
 
     private void PrepareMaterialDictionaries()
@@ -31,7 +37,7 @@ public class GlowHighlight : MonoBehaviour
             {
                 Material mat = null;
 
-                if(cachedGlowMaterials.TryGetValue(originalMaterials[i].color, out mat) == false)
+                if (cachedGlowMaterials.TryGetValue(originalMaterials[i].color, out mat) == false)
                 {
                     mat = new Material(glowMaterial);
                     mat.color = originalMaterials[i].color;
@@ -44,10 +50,47 @@ public class GlowHighlight : MonoBehaviour
         }
     }
 
+    internal void HighlightValidPath()
+    {
+        if (isGlowing == false)
+        {
+            return;
+        }
+
+        foreach (Renderer renderer in glowMaterialDictionary.Keys)
+        {
+            foreach (var item in glowMaterialDictionary[renderer])
+            {
+                item.SetColor(glowReference, validSpaceColor);
+            }
+
+            renderer.materials = glowMaterialDictionary[renderer];
+        }
+    }
+
+    internal void ResetGlowHighlight(bool forceReset = false)
+    {
+        if (isGlowing == false && !forceReset)
+        {
+            return;
+        }
+
+        foreach (Renderer renderer in glowMaterialDictionary.Keys)
+        {
+            foreach (var item in glowMaterialDictionary[renderer])
+            {
+                item.SetColor(glowReference, originalGlowColor);
+            }
+
+            renderer.materials = glowMaterialDictionary[renderer];
+        }
+    }
+
     public void ToggleGlow()
     {
         if (isGlowing == false)
         {
+            ResetGlowHighlight(true);
             foreach (Renderer renderer in originalMaterialDictionary.Keys)
             {
                 renderer.materials = glowMaterialDictionary[renderer];
@@ -66,7 +109,7 @@ public class GlowHighlight : MonoBehaviour
 
     public void ToggleGlow(bool state)
     {
-        if(isGlowing == state)
+        if (isGlowing == state)
         {
             return;
         }

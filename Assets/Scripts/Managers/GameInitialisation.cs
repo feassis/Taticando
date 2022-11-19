@@ -9,6 +9,8 @@ public class GameInitialisation : MonoBehaviour
     {
         InitializeGridService();
         InitializingGraphSearch();
+        InitializingMovementSystem();
+        InitilizingUnitManager();
     }
 
     private void InitializeGridService()
@@ -23,5 +25,17 @@ public class GameInitialisation : MonoBehaviour
     {
         var graphSearch = new GraphSearch();
         ServiceLocator.RegisterService<GraphSearch>(graphSearch);
+    }
+
+    private void InitializingMovementSystem()
+    {
+        var movementSystem = new MovementSystem();
+        ServiceLocator.RegisterService<MovementSystem>(movementSystem);
+    }
+
+    private void InitilizingUnitManager()
+    {
+        var unitManager = new UnitManager();
+        ServiceLocator.RegisterService<UnitManager>(unitManager);
     }
 }
