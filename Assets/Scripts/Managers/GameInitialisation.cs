@@ -11,6 +11,7 @@ public class GameInitialisation : MonoBehaviour
         InitializingGraphSearch();
         InitializingMovementSystem();
         InitilizingUnitManager();
+        CombatManagerInitialization();
     }
 
     private void InitializeGridService()
@@ -37,5 +38,12 @@ public class GameInitialisation : MonoBehaviour
     {
         var unitManager = new UnitManager();
         ServiceLocator.RegisterService<UnitManager>(unitManager);
+    }
+
+    private void CombatManagerInitialization() //this will change once Screem Manager is implementend
+    {
+        var combatManager = new CombatManager();
+
+        ServiceLocator.RegisterService<CombatManager>(combatManager);
     }
 }

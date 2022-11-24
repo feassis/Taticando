@@ -8,6 +8,7 @@ public class MovementSystem
 {
     private BFSResult movementRange = new BFSResult();
     private List<Vector3Int> currentPath = new List<Vector3Int>();
+    private int currentCost;
 
     public void HideRange(IGrid grid)
     {
@@ -52,7 +53,10 @@ public class MovementSystem
                 grid.GetTileAt(position).ResetHightlight();
             }
 
-            currentPath = movementRange.GetPathTo(selectedHexPosition);
+            (var path, var cost) = movementRange.GetPathTo(selectedHexPosition);
+
+            currentPath = path;
+            currentCost = cost;
 
             foreach (Vector3Int position in currentPath)
             {
@@ -64,7 +68,15 @@ public class MovementSystem
     public void MoveUnit(UnitGraphics selectedUnit, IGrid grid)
     {
         Debug.Log("Moving Unit " + selectedUnit.name);
-        selectedUnit.MoveThroughPath(currentPath.Select(pos => grid.GetTileAt(pos).transform.position).ToList());
+        selectedUnit.MoveThroughPath(currentPath.Select(pos => grid.GetTileAt(pos).transform.position).ToList(), currentCost);
+        selectedUnit.MovementFinished += UnitMovementFinished;
+    }
+
+    private void UnitMovementFinished(UnitGraphics unit)
+    {
+        var combatManager = ServiceLocator.GetService<CombatManager>();
+
+        combatManager.CheckTeamHasActionsToDo();
     }
 
     public bool IsTileInRange(Vector3Int hexPosition)
