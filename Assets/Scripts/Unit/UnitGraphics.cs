@@ -1,15 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Tools;
 using UnityEngine;
 
 [SelectionBase]
 public class UnitGraphics : MonoBehaviour
 {
-    [SerializeField]
-    private int movementPoints = 20; //move movement poits to a model script
+    [SerializeField] private TeamEnum team;
 
-    public int MovementPoints { get => movementPoints; }
+    public int MovementPoints { get => ServiceLocator.GetService<CombatManager>().GetUnitMovementPoints(gameObject); }
 
     [SerializeField]
     private float movementDuration = 1, rotationDuration = 0.3f;
@@ -28,6 +28,12 @@ public class UnitGraphics : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        var combatManager = ServiceLocator.GetService<CombatManager>();
+        combatManager.AddUnitToTeam(team, gameObject);
+    }
+
     public void Deselect()
     {
         glowHighlight.ToggleGlow(false);
@@ -38,10 +44,12 @@ public class UnitGraphics : MonoBehaviour
         glowHighlight.ToggleGlow(true);
     }
 
-    public void MoveThroughPath(List<Vector3> currentPath)
+    public void MoveThroughPath(List<Vector3> currentPath, int currentCost)
     {
+        var combatManager = ServiceLocator.GetService<CombatManager>();
         pathPositions = new Queue<Vector3>(currentPath);
         Vector3 firstTarget = pathPositions.Dequeue();
+        combatManager.SpendMovementPointsOfAUnit(gameObject, currentCost);
         StartCoroutine(RotationCoroutine(firstTarget, rotationDuration));
     }
 

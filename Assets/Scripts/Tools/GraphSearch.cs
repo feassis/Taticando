@@ -74,16 +74,27 @@ public struct BFSResult
 {
     public Dictionary<Vector3Int, Vector3Int?> visitedNodesDict;
 
-    public List<Vector3Int> GetPathTo(Vector3Int destination)
+    public (List<Vector3Int> path, int pathCost) GetPathTo(Vector3Int destination)
     {
         if (!visitedNodesDict.ContainsKey(destination))
         {
-            return new List<Vector3Int>();
+            return (new List<Vector3Int>(), 0);
         }
 
         var graphSearch = ServiceLocator.GetService<GraphSearch>();
+        var grid = ServiceLocator.GetService<IGrid>();
+        var gridService = ServiceLocator.GetService<GridService>();
 
-        return graphSearch.GeneratePathPFS(destination, visitedNodesDict);
+        var path = graphSearch.GeneratePathPFS(destination, visitedNodesDict);
+
+        int cost = 0;
+
+        foreach (var node in path)
+        {
+            cost += gridService.GetTileCost(grid.GetTileAt(node).TileType);
+        }
+
+        return (path, cost);
     }
 
     public bool IsHexPositionInRange(Vector3Int position)

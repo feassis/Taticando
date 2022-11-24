@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class UnitManager
 {
-    public bool PlayerTurn { get; private set; } = true; //this will probably change to a team enum
+    private bool canMoving = true;
 
     [SerializeField] private UnitGraphics selectedUnit;
     private TileGraphics previousSelectedTile;
 
     public void HandleUnitSelected(GameObject unit)
     {
-        if (PlayerTurn == false)
+        if (!IsUnitsTurn(unit))
         {
             return;
         }
@@ -28,6 +28,13 @@ public class UnitManager
         PrepareUnitForMovement(unitReference);
     }
 
+    private bool IsUnitsTurn(GameObject unit)
+    {
+        var combatManget = ServiceLocator.GetService<CombatManager>();
+
+        return combatManget.IsThisUnitTurn(unit);
+    }
+    
     private void PrepareUnitForMovement(UnitGraphics unitReference)
     {
         if(selectedUnit != null)
@@ -46,7 +53,7 @@ public class UnitManager
 
     public void HandleTerrainSelected(GameObject tile)
     {
-        if(selectedUnit == null || PlayerTurn == false)
+        if(selectedUnit == null || canMoving == false)
         {
             return;
         }
@@ -73,15 +80,15 @@ public class UnitManager
         }
 
         movementSystem.MoveUnit(selectedUnit, grid);
-        PlayerTurn = false;
-        selectedUnit.MovementFinished += ResetTurn;
+        canMoving = false;
+        selectedUnit.MovementFinished += FinishMovement;
         ClearOldSelection();
     }
 
-    private void ResetTurn(UnitGraphics obj)
+    private void FinishMovement(UnitGraphics obj)
     {
-        obj.MovementFinished -= ResetTurn;
-        PlayerTurn = true;
+        obj.MovementFinished -= FinishMovement;
+        canMoving = true;
     }
 
     private bool HandleSelectedTileIsUnitTile(Vector3Int coords)
