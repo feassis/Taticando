@@ -3483,6 +3483,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraRig
       objectReference: {fileID: 0}
+    - target: {fileID: 1513040979192076196, guid: 7d5ca7ce596a9da4d8941cda99e9d1f4,
+        type: 3}
+      propertyPath: MouseZoomMultiplier
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 1513040979192076197, guid: 7d5ca7ce596a9da4d8941cda99e9d1f4,
         type: 3}
       propertyPath: m_RootOrder
@@ -3543,6 +3548,12 @@ PrefabInstance:
 --- !u!20 &739832097 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 1513040980422896800, guid: 7d5ca7ce596a9da4d8941cda99e9d1f4,
+    type: 3}
+  m_PrefabInstance: {fileID: 739832096}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &739832098 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1513040980422896803, guid: 7d5ca7ce596a9da4d8941cda99e9d1f4,
     type: 3}
   m_PrefabInstance: {fileID: 739832096}
   m_PrefabAsset: {fileID: 0}
@@ -4032,6 +4043,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e4a278ef75957d46a89ecec0992c9e3, type: 3}
+--- !u!4 &863625169 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1513040979192076197, guid: 7d5ca7ce596a9da4d8941cda99e9d1f4,
+    type: 3}
+  m_PrefabInstance: {fileID: 739832096}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &874018988 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5789975331710758297, guid: 4e4a278ef75957d46a89ecec0992c9e3,
@@ -5849,6 +5866,53 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e4a278ef75957d46a89ecec0992c9e3, type: 3}
+--- !u!1 &1215772657
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1215772658}
+  - component: {fileID: 1215772659}
+  m_Layer: 0
+  m_Name: CameraService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1215772658
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215772657}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1754295100}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1215772659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215772657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19fd6ba4a42492e4d851734440b023f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamera: {fileID: 739832097}
+  mainCameraTransform: {fileID: 739832098}
+  mainCameraRigTransform: {fileID: 863625169}
 --- !u!1001 &1220777249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7790,6 +7854,7 @@ Transform:
   - {fileID: 423647954}
   - {fileID: 292502808}
   - {fileID: 1965627586}
+  - {fileID: 1215772658}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
