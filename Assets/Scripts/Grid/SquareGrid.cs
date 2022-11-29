@@ -15,9 +15,11 @@ public class SquareGrid : MonoBehaviour, IGrid
 
     private void Start()
     {
+        var gridService = ServiceLocator.GetService<GridService>();
         foreach (var tile in FindObjectsOfType<TileGraphics>())
         {
             tileDict[tile.Coords] = tile;
+            gridService.AddTile(tile.Coords, tile.TileType);
         }
     }
 

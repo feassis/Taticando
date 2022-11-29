@@ -23,12 +23,12 @@ public class GraphSearch
 
             foreach (Vector3Int neighbourPosition in grid.GetNeighBoursFor(currentNode))
             {
-                if (gridService.IsTileAnObstacle(grid.GetTileAt(neighbourPosition).TileType))
+                if (gridService.IsTileAnObstacle(neighbourPosition))
                 {
                     continue;
                 }
 
-                int nodeCost = gridService.GetTileCost(grid.GetTileAt(neighbourPosition).TileType);
+                int nodeCost = gridService.GetTileCost(neighbourPosition);
                 int currentCost = costSoFar[currentNode];
                 int newCost = currentCost + nodeCost;
 
@@ -91,7 +91,7 @@ public struct BFSResult
 
         foreach (var node in path)
         {
-            cost += gridService.GetTileCost(grid.GetTileAt(node).TileType);
+            cost += gridService.GetTileCost(node);
         }
 
         return (path, cost);
