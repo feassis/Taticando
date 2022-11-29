@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Tools;
 using UnityEngine;
 
 [SelectionBase]
@@ -9,6 +10,8 @@ public class TileGraphics : MonoBehaviour
     [SerializeField] private GridCoordinates gridCoordinates;
 
     [SerializeField] private GlowHighlight highlight;
+
+    [SerializeField] private TileElementGraphics tileElements;
 
     public TileType TileType;
 
@@ -25,6 +28,16 @@ public class TileGraphics : MonoBehaviour
         {
             highlight = GetComponent<GlowHighlight>();
         }
+    }
+
+    private void Start()
+    {
+        ServiceLocator.GetService<GridService>().OnElementApplied += UpdateElementsVisibility;
+    }
+
+    private void UpdateElementsVisibility()
+    {
+        tileElements.UpdateElementsVisibility(Coords);
     }
 
     public void EnableHighlight()
@@ -45,5 +58,10 @@ public class TileGraphics : MonoBehaviour
     public void HighlightPath()
     {
         highlight.HighlightValidPath();
+    }
+
+    private void OnDestroy()
+    {
+        ServiceLocator.GetService<GridService>().OnElementApplied -= UpdateElementsVisibility;
     }
 }

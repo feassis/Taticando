@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 public class TileModel
 {
@@ -26,6 +27,12 @@ public class TileModel
     public bool IsTileAfflictedByElement(ElementsEnum element)
     {
         return elements.HasFlag(element);
+    }
+
+    public void ApplyElement(ElementsEnum elementsEnum)
+    {
+        elements |= elementsEnum;
+        Debug.Log($"Element {elements}, shold have {elementsEnum}");
     }
 
     public bool IsObstacle()

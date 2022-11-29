@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridService
 {
     Dictionary<Vector3Int, TileModel> tileDict = new Dictionary<Vector3Int, TileModel>();
+
+    public Action OnElementApplied;
 
     public void Setup()
     {
@@ -19,6 +22,21 @@ public class GridService
         }
 
         tileDict.Add(position, new TileModel(type));
+    }
+
+    public void ApplyElementToTiles(List<Vector3Int> positions, ElementsEnum element)
+    {
+        foreach (var pos in positions)
+        {
+            tileDict[pos].ApplyElement(element);
+        }
+
+        OnElementApplied?.Invoke();
+    }
+
+    public bool IsTileAfflictedByElement(Vector3Int position, ElementsEnum element)
+    {
+        return tileDict[position].IsTileAfflictedByElement(element);
     }
 
     public int GetTileCost(Vector3Int position)
