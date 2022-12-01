@@ -17,7 +17,7 @@ public class GridCoordinates : MonoBehaviour
     private void Awake()
     {
         offsetCoordinates = ConversPositionToOffset(transform.position);
-        gameObject.name = $"Tile - (x: {offsetCoordinates.x},y: {offsetCoordinates.y},z: {offsetCoordinates.z})";
+        gameObject.name = $"{gameObject.name} - (x: {offsetCoordinates.x},y: {offsetCoordinates.y},z: {offsetCoordinates.z})";
     }
 
     public static Vector3Int ConversPositionToOffset(Vector3 position)

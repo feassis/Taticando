@@ -43,7 +43,7 @@ public class SquareGrid : MonoBehaviour, IGrid
 
         tileNeighboursDict.Add(coordinate, new List<Vector3Int>());
 
-        foreach (var direction in Direction.GetDirectionList(coordinate.z))
+        foreach (var direction in Direction.GetDirectionList(NeighbourhoodType.Cross))
         {
             if (tileDict.ContainsKey(coordinate + direction))
             {
@@ -68,7 +68,7 @@ public class SquareGrid : MonoBehaviour, IGrid
 
 public static class Direction
 {
-    public static List<Vector3Int> DirectionCrossNeighbourhood= new List<Vector3Int>
+    public static List<Vector3Int> DirectionCrossNeighbourhood = new List<Vector3Int>
     {
         new Vector3Int(1,0,0),
         new Vector3Int(-1, 0, 0),
@@ -76,7 +76,57 @@ public static class Direction
         new Vector3Int(0, 0, -1),
     };
 
-    public static List<Vector3Int> GetDirectionList(int z) => DirectionCrossNeighbourhood;
+    public static List<Vector3Int> LineUp = new List<Vector3Int>
+    {
+        new Vector3Int(0, 0, 1)
+    };
+
+    public static List<Vector3Int> LineDown = new List<Vector3Int>
+    {
+        new Vector3Int(0, 0, -1)
+    };
+
+    public static List<Vector3Int> LineRight = new List<Vector3Int>
+    {
+        new Vector3Int(1, 0, 0)
+    };
+
+    public static List<Vector3Int> LineLeft = new List<Vector3Int>
+    {
+        new Vector3Int(-1, 0, 0)
+    };
+
+    public static List<Vector3Int> CenteredSquare = new List<Vector3Int>
+    {
+        new Vector3Int(1,0,0),
+        new Vector3Int(-1, 0, 0),
+        new Vector3Int(0, 0, 1),
+        new Vector3Int(0, 0, -1),
+        new Vector3Int(1,0,1),
+        new Vector3Int(-1, 0, 1),
+        new Vector3Int(-1, 0, -1),
+        new Vector3Int(1, 0, -1),
+    };
+
+    public static List<Vector3Int> GetDirectionList(NeighbourhoodType type) => type switch
+    {
+        NeighbourhoodType.Cross => DirectionCrossNeighbourhood,
+        NeighbourhoodType.LineUp => LineUp,
+        NeighbourhoodType.LineDown => LineDown,
+        NeighbourhoodType.LineRight => LineRight,
+        NeighbourhoodType.LineLeft => LineLeft,
+        NeighbourhoodType.CenteredSquare => CenteredSquare,
+    };
+}
+
+public enum NeighbourhoodType
+{
+    Cross = 0,
+    LineUp = 1,
+    LineDown = 2,
+    LineRight = 3,
+    LineLeft = 4,
+    CenteredSquare = 5
 }
 
 public interface IGrid
