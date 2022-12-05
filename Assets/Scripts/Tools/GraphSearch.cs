@@ -70,7 +70,7 @@ public class GraphSearch
     }
 }
 
-public struct BFSResult
+public class BFSResult
 {
     public Dictionary<Vector3Int, Vector3Int?> visitedNodesDict;
 
@@ -102,5 +102,5 @@ public struct BFSResult
         return visitedNodesDict.ContainsKey(position);
     }
 
-    public IEnumerable<Vector3Int> GetRangePositions() => visitedNodesDict.Keys;
+    public IEnumerable<Vector3Int> GetRangePositions() => visitedNodesDict == null ? new List<Vector3Int>() : visitedNodesDict.Keys;
 }

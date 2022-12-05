@@ -51,14 +51,17 @@ public class SelectionManager : MonoBehaviour
             {
                 OnUnitSeleced?.Invoke(result);
             }
-            else
+            else if(TileSelected(result))
             {
                 OnTerrainSelected?.Invoke(result);
             }
         }
     }
 
+
+
     private bool UnitSelected(GameObject result) => result.GetComponent<UnitGraphics>() != null;
+    private bool TileSelected(GameObject result) => result.GetComponent<TileGraphics>() != null;
 
     private bool FindTarget(Vector3 mousePosition, out GameObject result)
     {

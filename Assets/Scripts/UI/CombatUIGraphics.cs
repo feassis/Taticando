@@ -10,13 +10,20 @@ public class CombatUIGraphics : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI teamText;
     [SerializeField] private Button changeTurnButton;
+    [SerializeField] private Button actionButton;
+    [SerializeField] private Button turnLeftButton;
+    [SerializeField] private Button turnRightButton;
 
     private void Start()
     {
         var combatManager = ServiceLocator.GetService<CombatManager>();
         changeTurnButton.onClick.AddListener(combatManager.ChangeTurn);
+        combatManager.OnTurnChange += ResetActionButton;
         UpdateTeamText();
         combatManager.OnTurnChange += UpdateTeamText;
+        actionButton.onClick.AddListener(OnActionButtonClicked);
+        turnRightButton.onClick.AddListener(OnTurnRightButton);
+        turnLeftButton.onClick.AddListener(OnTurnLeftButton);
     }
     private void UpdateTeamText()
     {
@@ -24,9 +31,35 @@ public class CombatUIGraphics : MonoBehaviour
         teamText.text = combatManager.GetCurrentTeamTurn().MyTeam.ToString();
     }
 
+    private void OnTurnRightButton()
+    {
+        ServiceLocator.GetService<UnitManager>().RotateUnitInPlace(RotationOrientarition.Clockwise);
+    }
+
+    private void OnTurnLeftButton()
+    {
+        ServiceLocator.GetService<UnitManager>().RotateUnitInPlace(RotationOrientarition.AntiClockwise);
+    }
+
+    private void OnActionButtonClicked()
+    {
+        ServiceLocator.GetService<UnitManager>().HideMovementRange();
+        actionButton.gameObject.SetActive(false);
+        turnLeftButton.gameObject.SetActive(true);
+        turnRightButton.gameObject.SetActive(true);
+    }
+
+    private void ResetActionButton()
+    {
+        actionButton.gameObject.SetActive(true);
+        turnLeftButton.gameObject.SetActive(false);
+        turnRightButton.gameObject.SetActive(false);
+    }
+
     private void OnDestroy()
     {
         var combatManager = ServiceLocator.GetService<CombatManager>();
         combatManager.OnTurnChange -= UpdateTeamText;
+        combatManager.OnTurnChange -= ResetActionButton;
     }
 }

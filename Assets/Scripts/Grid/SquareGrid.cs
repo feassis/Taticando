@@ -124,6 +124,7 @@ public static class Direction
         NeighbourhoodType.LineLeft => LineLeft,
         NeighbourhoodType.CenteredSquare => CenteredSquare,
         NeighbourhoodType.UpCone => UpCone,
+        _ => throw new System.NotImplementedException(),
     };
 }
 

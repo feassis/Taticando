@@ -18,6 +18,7 @@ public class UnitGraphics : MonoBehaviour
     private GlowHighlight glowHighlight;
     private Queue<Vector3> pathPositions = new Queue<Vector3>();
     public Vector2Int CurrentUnitPosition;
+    private bool isRotatingInPlace = false;
 
     public event Action<UnitGraphics> MovementFinished;
 
@@ -76,6 +77,50 @@ public class UnitGraphics : MonoBehaviour
 
         StartCoroutine(MovementCoroutine(endPosition));
     }
+
+    private IEnumerator RotationCoroutine(RotationOrientarition direction, float rotationDuration)
+    {
+        Quaternion startRotation = transform.rotation;
+
+        Quaternion endRotation;
+        if (direction == RotationOrientarition.Clockwise)
+        {
+            endRotation = startRotation * Quaternion.Euler(0, 90, 0);
+        }
+        else
+        {
+            endRotation = startRotation * Quaternion.Euler(0, -90, 0);
+        }
+
+        if (Mathf.Approximately(Mathf.Abs(Quaternion.Dot(startRotation, endRotation)), 1.0f) == false)
+        {
+            float timeElapsed = 0;
+
+            while (timeElapsed < rotationDuration)
+            {
+                timeElapsed += Time.deltaTime;
+                float lerpStep = timeElapsed / rotationDuration;
+                transform.rotation = Quaternion.Lerp(startRotation, endRotation, lerpStep);
+                yield return null;
+            }
+        }
+
+        isRotatingInPlace = false;
+    }
+
+    public void RotateInPlace(RotationOrientarition direction)
+    {
+        if (isRotatingInPlace)
+        {
+            return;
+        }
+
+        isRotatingInPlace = true;
+
+        StartCoroutine(RotationCoroutine(direction, rotationDuration));
+    }
+
+
 
     private IEnumerator MovementCoroutine(Vector3 endPosition)
     {

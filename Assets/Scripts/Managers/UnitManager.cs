@@ -15,7 +15,7 @@ public class UnitManager
     public static UnitManager Create(CombatManager combatManager)
     {
         var unitManager = new UnitManager();
-        combatManager.OnTurnChange += unitManager.ClearOldSelection;
+        combatManager.OnTurnChange += unitManager.HideMovementRange;
         return unitManager;
     }
 
@@ -136,11 +136,28 @@ public class UnitManager
         return false;
     }
 
-    public void ClearOldSelection()
+    public void RotateUnitInPlace(RotationOrientarition direction)
+    {
+        ServiceLocator.GetService<MovementSystem>().RotateInPlace(selectedUnit, direction);
+    }
+
+    public void HideMovementRange()
     {
         var grid = ServiceLocator.GetService<IGrid>();
+        ServiceLocator.GetService<MovementSystem>().HideRange(grid);
+    }
+
+    public void ClearOldSelection()
+    {
+        Debug.Log("Clear");
+        var grid = ServiceLocator.GetService<IGrid>();
         previousSelectedTile = null;
-        selectedUnit.Deselect();
+
+        if(selectedUnit != null)
+        {
+            selectedUnit.Deselect();
+        }
+        
         ServiceLocator.GetService<MovementSystem>().HideRange(grid);
         selectedUnit = null;
     }

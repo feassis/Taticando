@@ -73,6 +73,11 @@ public class MovementSystem
         selectedUnit.MovementFinished += UnitMovementFinished;
     }
 
+    public void RotateInPlace(UnitGraphics selectedUnit, RotationOrientarition direction)
+    {
+        selectedUnit.RotateInPlace(direction);
+    }
+
     private void UnitMovementFinished(UnitGraphics unit)
     {
         var combatManager = ServiceLocator.GetService<CombatManager>();
@@ -84,4 +89,10 @@ public class MovementSystem
     {
         return movementRange.IsHexPositionInRange(hexPosition);
     }
+}
+
+public enum RotationOrientarition
+{
+    Clockwise = 0,
+    AntiClockwise = 1
 }
