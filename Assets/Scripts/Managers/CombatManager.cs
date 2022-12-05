@@ -3,183 +3,158 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CombatManager
+namespace MVC.Controler.Combat
 {
-    private int currentTeamTurnIndex;
-
-    public Action OnTurnChange;
-
-    private List<Team> InCombatTeams = new List<Team>();
-
-    public Team GetCurrentTeamTurn() => currentTeamTurnIndex == 0 ? InCombatTeams[0] : InCombatTeams[currentTeamTurnIndex % InCombatTeams.Count];
-
-    public void CheckTeamHasActionsToDo()
+    public class CombatManager
     {
-        if (!GetCurrentTeamTurn().HasActionsToDo())
+        private int currentTeamTurnIndex;
+
+        public Action OnTurnChange;
+
+        private List<Team> InCombatTeams = new List<Team>();
+
+        public Team GetCurrentTeamTurn() => currentTeamTurnIndex == 0 ? InCombatTeams[0] : InCombatTeams[currentTeamTurnIndex % InCombatTeams.Count];
+
+        public void CheckTeamHasActionsToDo()
         {
-            ChangeTurn();
-        }
-    }
-
-    public void ChangeTurn()
-    {
-        currentTeamTurnIndex++;
-        ResetTeamUnitsTurn();
-        OnTurnChange?.Invoke();
-    }
-
-    public void AddUnitToTeam(TeamEnum desiredTeam, GameObject unitGraphicsObject)
-    {
-        Team selectedTeam = InCombatTeams.Find(t => t.MyTeam == desiredTeam);
-        
-        if (selectedTeam == null)
-        {
-            selectedTeam = new Team();
-            selectedTeam.MyTeam = desiredTeam;
-            InCombatTeams.Add(selectedTeam);
-        }
-
-        selectedTeam.UnitsInCombat.Add(new UnitInCombat(unitGraphicsObject));
-    }
-
-    public void SpendMovementPointsOfAUnit(GameObject unitObject, int cost)
-    {
-        var unitModel = GetUnitOfATeam(unitObject);
-        unitModel.SpentMovementPoints(cost);
-    }
-
-    public bool IsThisUnitTurn(GameObject unit)
-    {
-        var team = GetCurrentTeamTurn();
-
-        return team.IsUnitOnTeam(unit);
-    }
-
-    public int GetUnitMovementPoints(GameObject desiredUnit)
-    {
-        UnitModel unit = GetUnitOfATeam(desiredUnit);
-
-        if(unit == null)
-        {
-            Debug.LogError("unit not on a team");
-            return 0;
-        }
-
-        return unit.GetCurrentMovementPoints();
-    }
-
-    private List<UnitInCombat> GetUnitsOfATeam(TeamEnum teamEnum)
-    {
-        var units = new List<UnitInCombat>();
-
-        foreach (var team in InCombatTeams)
-        {
-            if (team.MyTeam != teamEnum)
+            if (!GetCurrentTeamTurn().HasActionsToDo())
             {
-                continue;
+                ChangeTurn();
+            }
+        }
+
+        public void ChangeTurn()
+        {
+            currentTeamTurnIndex++;
+            ResetTeamUnitsTurn();
+            OnTurnChange?.Invoke();
+        }
+
+        public void AddUnitToTeam(TeamEnum desiredTeam, GameObject unitGraphicsObject)
+        {
+            Team selectedTeam = InCombatTeams.Find(t => t.MyTeam == desiredTeam);
+
+            if (selectedTeam == null)
+            {
+                selectedTeam = new Team();
+                selectedTeam.MyTeam = desiredTeam;
+                InCombatTeams.Add(selectedTeam);
             }
 
-            return team.UnitsInCombat;
+            selectedTeam.UnitsInCombat.Add(new UnitInCombat(unitGraphicsObject));
         }
 
-        return null;
-    }
-
-    private void ResetTeamUnitsTurn()
-    {
-        var units = GetUnitsOfATeam(GetCurrentTeamTurn().MyTeam);
-
-        foreach (var unit in units)
+        public void SpendMovementPointsOfAUnit(GameObject unitObject, int cost)
         {
-            unit.UnitData.ResetUnitTurn();
+            var unitModel = GetUnitOfATeam(unitObject);
+            unitModel.SpentMovementPoints(cost);
         }
-    }
 
-    private UnitModel GetUnitOfATeam(GameObject desiredUnit)
-    {
-        foreach (var team in InCombatTeams)
+        public bool IsThisUnitTurn(GameObject unit)
         {
-            foreach (var unit in team.UnitsInCombat)
+            var team = GetCurrentTeamTurn();
+
+            return team.IsUnitOnTeam(unit);
+        }
+
+        public int GetUnitMovementPoints(GameObject desiredUnit)
+        {
+            UnitModel unit = GetUnitOfATeam(desiredUnit);
+
+            if (unit == null)
             {
-                if (unit.UnitOnScene.Equals(desiredUnit))
+                Debug.LogError("unit not on a team");
+                return 0;
+            }
+
+            return unit.GetCurrentMovementPoints();
+        }
+
+        private List<UnitInCombat> GetUnitsOfATeam(TeamEnum teamEnum)
+        {
+            var units = new List<UnitInCombat>();
+
+            foreach (var team in InCombatTeams)
+            {
+                if (team.MyTeam != teamEnum)
                 {
-                    return unit.UnitData;
+                    continue;
+                }
+
+                return team.UnitsInCombat;
+            }
+
+            return null;
+        }
+
+        private void ResetTeamUnitsTurn()
+        {
+            var units = GetUnitsOfATeam(GetCurrentTeamTurn().MyTeam);
+
+            foreach (var unit in units)
+            {
+                unit.UnitData.ResetUnitTurn();
+            }
+        }
+
+        private UnitModel GetUnitOfATeam(GameObject desiredUnit)
+        {
+            foreach (var team in InCombatTeams)
+            {
+                foreach (var unit in team.UnitsInCombat)
+                {
+                    if (unit.UnitOnScene.Equals(desiredUnit))
+                    {
+                        return unit.UnitData;
+                    }
                 }
             }
+
+            return null;
         }
-
-        return null;
     }
-}
 
-public class Team
-{
-    public TeamEnum MyTeam;
-    public List<UnitInCombat> UnitsInCombat = new List<UnitInCombat>();
-
-    public bool HasActionsToDo()
+    public class Team
     {
-        foreach (var unit in UnitsInCombat)
+        public TeamEnum MyTeam;
+        public List<UnitInCombat> UnitsInCombat = new List<UnitInCombat>();
+
+        public bool HasActionsToDo()
         {
-            if (unit.UnitData.HasActionsToDo())
+            foreach (var unit in UnitsInCombat)
             {
-                return true;
+                if (unit.UnitData.HasActionsToDo())
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public bool IsUnitOnTeam(GameObject unit)
-    {
-        foreach (var unitInCombat in UnitsInCombat)
+        public bool IsUnitOnTeam(GameObject unit)
         {
-            if (unitInCombat.UnitOnScene.Equals(unit))
+            foreach (var unitInCombat in UnitsInCombat)
             {
-                return true;
+                if (unitInCombat.UnitOnScene.Equals(unit))
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
-
-        return false;
-    }
-}
-
-public class UnitInCombat
-{
-    public GameObject UnitOnScene; //this will probably change to a ID system when unit spawn is decided
-    public UnitModel UnitData;
-
-    public UnitInCombat(GameObject unitGraphicsObject)
-    {
-        UnitOnScene = unitGraphicsObject;
-        UnitData = new UnitModel();
-    }
-}
-
-public class UnitModel
-{
-    [SerializeField] private int maxHp;
-    [SerializeField] private int movementPoints = 20;
-
-    private int currentMovementpoints = 20; //when spawn is made remoce this value initialization
-
-    public void ResetUnitTurn()
-    {
-        currentMovementpoints = movementPoints;
     }
 
-    public bool HasActionsToDo()
+    public class UnitInCombat
     {
-        return currentMovementpoints > 0;
-    }
+        public GameObject UnitOnScene; //this will probably change to a ID system when unit spawn is decided
+        public UnitModel UnitData;
 
-    public int GetCurrentMovementPoints()
-    {
-        return currentMovementpoints;
-    }
-
-    public void SpentMovementPoints(int cost)
-    {
-        currentMovementpoints -= cost;
+        public UnitInCombat(GameObject unitGraphicsObject)
+        {
+            UnitOnScene = unitGraphicsObject;
+            UnitData = new UnitModel();
+        }
     }
 }

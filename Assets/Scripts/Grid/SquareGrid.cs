@@ -108,6 +108,13 @@ public static class Direction
         new Vector3Int(1, 0, -1),
     };
 
+    public static List<Vector3Int> UpCone = new List<Vector3Int>
+    {
+        new Vector3Int(1,0,1),
+        new Vector3Int(0, 0, 1),
+        new Vector3Int(-1, 0, 1),
+    };
+
     public static List<Vector3Int> GetDirectionList(NeighbourhoodType type) => type switch
     {
         NeighbourhoodType.Cross => DirectionCrossNeighbourhood,
@@ -116,6 +123,7 @@ public static class Direction
         NeighbourhoodType.LineRight => LineRight,
         NeighbourhoodType.LineLeft => LineLeft,
         NeighbourhoodType.CenteredSquare => CenteredSquare,
+        NeighbourhoodType.UpCone => UpCone,
     };
 }
 
@@ -126,7 +134,8 @@ public enum NeighbourhoodType
     LineDown = 2,
     LineRight = 3,
     LineLeft = 4,
-    CenteredSquare = 5
+    CenteredSquare = 5,
+    UpCone = 6
 }
 
 public interface IGrid

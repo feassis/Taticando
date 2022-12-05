@@ -1,3 +1,4 @@
+using MVC.Controler.Combat;
 using System.Collections;
 using System.Collections.Generic;
 using Tools;
@@ -10,7 +11,6 @@ public class GameInitialisation : MonoBehaviour
         InitializeGridService();
         InitializingGraphSearch();
         InitializingMovementSystem();
-        InitilizingUnitManager();
         CombatManagerInitialization();
     }
 
@@ -34,16 +34,16 @@ public class GameInitialisation : MonoBehaviour
         ServiceLocator.RegisterService<MovementSystem>(movementSystem);
     }
 
-    private void InitilizingUnitManager()
+    private void InitilizingUnitManager(CombatManager combatManager)
     {
-        var unitManager = new UnitManager();
+        var unitManager = UnitManager.Create(combatManager);
         ServiceLocator.RegisterService<UnitManager>(unitManager);
     }
 
     private void CombatManagerInitialization() //this will change once Screem Manager is implementend
     {
         var combatManager = new CombatManager();
-
         ServiceLocator.RegisterService<CombatManager>(combatManager);
+        InitilizingUnitManager(combatManager);
     }
 }

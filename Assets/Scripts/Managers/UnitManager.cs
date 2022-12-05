@@ -1,3 +1,4 @@
+using MVC.Controler.Combat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,13 @@ public class UnitManager
 
     [SerializeField] private UnitGraphics selectedUnit;
     private TileGraphics previousSelectedTile;
+
+    public static UnitManager Create(CombatManager combatManager)
+    {
+        var unitManager = new UnitManager();
+        combatManager.OnTurnChange += unitManager.ClearOldSelection;
+        return unitManager;
+    }
 
     public void HandleUnitSelected(GameObject unit)
     {
@@ -128,7 +136,7 @@ public class UnitManager
         return false;
     }
 
-    private void ClearOldSelection()
+    public void ClearOldSelection()
     {
         var grid = ServiceLocator.GetService<IGrid>();
         previousSelectedTile = null;
