@@ -5,6 +5,77 @@ using Tools;
 
 public class GraphSearch
 {
+    public BFSResult BFSRangeAllCosts1(IGrid grid, Vector3Int startPoint, int movementPoints, bool forcedNeibourhood = false)
+    {
+        Dictionary<Vector3Int, Vector3Int?> visitedNodes = new Dictionary<Vector3Int, Vector3Int?>();
+        Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
+        Queue<Vector3Int> nodesToVisitQueue = new Queue<Vector3Int>();
+
+        nodesToVisitQueue.Enqueue(startPoint);
+        costSoFar.Add(startPoint, 0);
+        visitedNodes.Add(startPoint, null);
+
+        var gridService = ServiceLocator.GetService<GridService>();
+
+        List<Vector3Int> tempNodes = new List<Vector3Int>();
+
+        while (nodesToVisitQueue.Count > 0)
+        {
+            Vector3Int currentNode = nodesToVisitQueue.Dequeue();
+
+            List<Vector3Int> neighbours = new List<Vector3Int>();
+
+            if (forcedNeibourhood)
+            {
+                var neighboursFoced = grid.GetNeighBoursForForced(currentNode, tempNodes);
+                tempNodes.AddRange(neighboursFoced.tempPositions);
+                neighbours = neighboursFoced.neighbours;
+            }
+            else
+            {
+                neighbours = grid.GetNeighBoursFor(currentNode);
+            }
+
+            foreach (Vector3Int neighbourPosition in neighbours)
+            {
+                if (gridService.IsTileAnObstacle(neighbourPosition))
+                {
+                    continue;
+                }
+
+                int nodeCost = 1;
+                int currentCost = costSoFar[currentNode];
+                int newCost = currentCost + nodeCost;
+
+                if (newCost > movementPoints)
+                {
+                    continue;
+                }
+
+                if (!visitedNodes.ContainsKey(neighbourPosition))
+                {
+                    visitedNodes[neighbourPosition] = currentNode;
+                    costSoFar[neighbourPosition] = newCost;
+                    nodesToVisitQueue.Enqueue(neighbourPosition);
+                }
+                else if (costSoFar[neighbourPosition] > newCost)
+                {
+                    costSoFar[neighbourPosition] = newCost;
+                    visitedNodes[neighbourPosition] = currentNode;
+                }
+            }
+        }
+
+        grid.RemoveTemporaryNodes(tempNodes);
+
+        foreach (var node in tempNodes)
+        {
+            visitedNodes.Remove(node);
+        }
+
+        return new BFSResult { visitedNodesDict = visitedNodes };
+    }
+
     public BFSResult BFSGetRange(IGrid grid, Vector3Int startPoint, int movementPoints)
     {
         Dictionary<Vector3Int, Vector3Int?> visitedNodes = new Dictionary<Vector3Int, Vector3Int?>();

@@ -54,6 +54,41 @@ public class SquareGrid : MonoBehaviour, IGrid
         return tileNeighboursDict[coordinate];
     }
 
+    public (List<Vector3Int> tempPositions, List<Vector3Int> neighbours) GetNeighBoursForForced(Vector3Int coordinate, List<Vector3Int> tempPositions)
+    {
+        List<Vector3Int> tempPosition = new List<Vector3Int>();
+        tempPosition.AddRange(tempPositions);
+
+        if (!tileDict.ContainsKey(coordinate))
+        {
+            tileDict.Add(coordinate, null);
+            tempPosition.Add(coordinate);
+        }
+
+        if (tileNeighboursDict.ContainsKey(coordinate))
+        {
+            return (tempPosition, tileNeighboursDict[coordinate]);
+        }
+
+        tileNeighboursDict.Add(coordinate, new List<Vector3Int>());
+
+        foreach (var direction in Direction.GetDirectionList(NeighbourhoodType.Cross))
+        {
+            if (tileDict.ContainsKey(coordinate + direction))
+            {
+                tileNeighboursDict[coordinate].Add(coordinate + direction);
+            }
+            else
+            {
+                tileNeighboursDict.Add(coordinate, new List<Vector3Int>());
+                tileNeighboursDict[coordinate].Add(coordinate + direction);
+                tempPosition.Add(coordinate);
+            }
+        }
+
+        return (tempPosition, tileNeighboursDict[coordinate]);
+    }
+
     private void OnDestroy()
     {
         ServiceLocator.DeregisterService<IGrid>();
@@ -63,6 +98,15 @@ public class SquareGrid : MonoBehaviour, IGrid
     {
         worldPosition.y = 0;
         return GridCoordinates.ConversPositionToOffset(worldPosition);
+    }
+
+    public void RemoveTemporaryNodes(List<Vector3Int> temporaryNodes)
+    {
+        foreach (var node in temporaryNodes)
+        {
+            tileDict.Remove(node);
+            tileNeighboursDict.Remove(node);
+        }
     }
 }
 
@@ -141,7 +185,9 @@ public enum NeighbourhoodType
 
 public interface IGrid
 {
-   TileGraphics GetTileAt(Vector3Int coordinates);
-   List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate);
+    TileGraphics GetTileAt(Vector3Int coordinates);
+    List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate);
+    (List<Vector3Int> tempPositions, List<Vector3Int> neighbours) GetNeighBoursForForced(Vector3Int coordinate, List<Vector3Int> tempPositions);
     Vector3Int GetClosestTile(Vector3 worldPosition);
+    void RemoveTemporaryNodes(List<Vector3Int> temporaryNodes);
 }
