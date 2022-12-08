@@ -29,7 +29,7 @@ public class SquareGrid : MonoBehaviour, IGrid
         return tile;
     }
 
-    public List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate)
+    public List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate, NeighbourhoodType type)
     {
         if (!tileDict.ContainsKey(coordinate))
         {
@@ -43,7 +43,7 @@ public class SquareGrid : MonoBehaviour, IGrid
 
         tileNeighboursDict.Add(coordinate, new List<Vector3Int>());
 
-        foreach (var direction in Direction.GetDirectionList(NeighbourhoodType.Cross))
+        foreach (var direction in Direction.GetDirectionList(type))
         {
             if (tileDict.ContainsKey(coordinate + direction))
             {
@@ -54,7 +54,7 @@ public class SquareGrid : MonoBehaviour, IGrid
         return tileNeighboursDict[coordinate];
     }
 
-    public (List<Vector3Int> tempPositions, List<Vector3Int> neighbours) GetNeighBoursForForced(Vector3Int coordinate, List<Vector3Int> tempPositions)
+    public (List<Vector3Int> tempPositions, List<Vector3Int> neighbours) GetNeighBoursForForced(Vector3Int coordinate, List<Vector3Int> tempPositions, NeighbourhoodType type)
     {
         List<Vector3Int> tempPosition = new List<Vector3Int>();
         tempPosition.AddRange(tempPositions);
@@ -62,7 +62,14 @@ public class SquareGrid : MonoBehaviour, IGrid
         if (!tileDict.ContainsKey(coordinate))
         {
             tileDict.Add(coordinate, null);
-            tempPosition.Add(coordinate);
+
+            if (!tempPosition.Contains(coordinate))
+            {
+                tempPosition.Add(coordinate);
+            }
+            var neighbours = GetNeighBoursFor(coordinate, type);
+
+            return (tempPosition, neighbours);
         }
 
         if (tileNeighboursDict.ContainsKey(coordinate))
@@ -72,7 +79,7 @@ public class SquareGrid : MonoBehaviour, IGrid
 
         tileNeighboursDict.Add(coordinate, new List<Vector3Int>());
 
-        foreach (var direction in Direction.GetDirectionList(NeighbourhoodType.Cross))
+        foreach (var direction in Direction.GetDirectionList(type))
         {
             if (tileDict.ContainsKey(coordinate + direction))
             {
@@ -80,9 +87,13 @@ public class SquareGrid : MonoBehaviour, IGrid
             }
             else
             {
-                tileNeighboursDict.Add(coordinate, new List<Vector3Int>());
+                tileDict.Add(coordinate + direction, null);
                 tileNeighboursDict[coordinate].Add(coordinate + direction);
-                tempPosition.Add(coordinate);
+
+                if (!tempPosition.Contains(coordinate + direction))
+                {
+                    tempPosition.Add(coordinate + direction);
+                }
             }
         }
 
@@ -186,8 +197,8 @@ public enum NeighbourhoodType
 public interface IGrid
 {
     TileGraphics GetTileAt(Vector3Int coordinates);
-    List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate);
-    (List<Vector3Int> tempPositions, List<Vector3Int> neighbours) GetNeighBoursForForced(Vector3Int coordinate, List<Vector3Int> tempPositions);
+    List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate, NeighbourhoodType type);
+    (List<Vector3Int> tempPositions, List<Vector3Int> neighbours) GetNeighBoursForForced(Vector3Int coordinate, List<Vector3Int> tempPositions, NeighbourhoodType type);
     Vector3Int GetClosestTile(Vector3 worldPosition);
     void RemoveTemporaryNodes(List<Vector3Int> temporaryNodes);
 }

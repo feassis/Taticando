@@ -60,6 +60,16 @@ public class TileGraphics : MonoBehaviour
         highlight.HighlightValidPath();
     }
 
+    public void ResetActionHightlight()
+    {
+        highlight.ToggleGlow(false);//change hoghlight when range is working
+    }
+
+    public void HighlightActionRange()
+    {
+        highlight.ToggleGlow(true);//change hoghlight when range is working
+    }
+
     private void OnDestroy()
     {
         ServiceLocator.GetService<GridService>().OnElementApplied -= UpdateElementsVisibility;

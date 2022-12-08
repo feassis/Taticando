@@ -43,7 +43,10 @@ public class CombatUIGraphics : MonoBehaviour
 
     private void OnActionButtonClicked()
     {
-        ServiceLocator.GetService<UnitManager>().HideMovementRange();
+        var unitManager = ServiceLocator.GetService<UnitManager>();
+        unitManager.HideMovementRange();
+        unitManager.ShowUnitActionRange();
+
         actionButton.gameObject.SetActive(false);
         turnLeftButton.gameObject.SetActive(true);
         turnRightButton.gameObject.SetActive(true);

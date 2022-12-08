@@ -10359,5 +10359,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit
       objectReference: {fileID: 0}
+    - target: {fileID: 7081179192984600542, guid: 85232fbd9f4236b489c0a6d86d8c7cdd,
+        type: 3}
+      propertyPath: actionDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081179192984600542, guid: 85232fbd9f4236b489c0a6d86d8c7cdd,
+        type: 3}
+      propertyPath: actionRangeAmount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081179192984600542, guid: 85232fbd9f4236b489c0a6d86d8c7cdd,
+        type: 3}
+      propertyPath: neighbourhoodType
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85232fbd9f4236b489c0a6d86d8c7cdd, type: 3}

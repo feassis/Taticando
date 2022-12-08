@@ -257,9 +257,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  coords: {fileID: 7081179192984600543}
+  actionDistance: 3
+  neighbourhoodType: 5
+  actionRangeAmount: 2
   movementDuration: 1
   rotationDuration: 0.3
-  CurrentUnitPosition: {x: 0, y: 0}
 --- !u!114 &7081179192984600541
 MonoBehaviour:
   m_ObjectHideFlags: 0

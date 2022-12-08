@@ -36,6 +36,12 @@ public class UnitManager
         PrepareUnitForMovement(unitReference);
     }
 
+    public void ShowUnitActionRange()
+    {
+        var grid = ServiceLocator.GetService<IGrid>();
+        selectedUnit.ShowActionRange(grid);
+    }
+
     private bool IsUnitsTurn(GameObject unit)
     {
         var combatManget = ServiceLocator.GetService<CombatManager>();
@@ -138,7 +144,7 @@ public class UnitManager
 
     public void RotateUnitInPlace(RotationOrientarition direction)
     {
-        ServiceLocator.GetService<MovementSystem>().RotateInPlace(selectedUnit, direction);
+        ServiceLocator.GetService<MovementSystem>().RotateInPlace(selectedUnit, direction, ShowUnitActionRange);
     }
 
     public void HideMovementRange()

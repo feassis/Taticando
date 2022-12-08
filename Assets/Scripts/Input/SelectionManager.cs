@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Tools;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -44,6 +45,11 @@ public class SelectionManager : MonoBehaviour
     public void HandleClick(Vector3 mousePosition)
     {
         var grid = ServiceLocator.GetService<IGrid>();
+
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
 
         if (FindTarget(mousePosition, out GameObject result))
         {

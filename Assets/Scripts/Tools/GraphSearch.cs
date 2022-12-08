@@ -5,7 +5,7 @@ using Tools;
 
 public class GraphSearch
 {
-    public BFSResult BFSRangeAllCosts1(IGrid grid, Vector3Int startPoint, int movementPoints, bool forcedNeibourhood = false)
+    public BFSResult BFSRangeAllCosts1(IGrid grid, Vector3Int startPoint, int movementPoints, NeighbourhoodType type, bool forcedNeibourhood = false)
     {
         Dictionary<Vector3Int, Vector3Int?> visitedNodes = new Dictionary<Vector3Int, Vector3Int?>();
         Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
@@ -27,18 +27,18 @@ public class GraphSearch
 
             if (forcedNeibourhood)
             {
-                var neighboursFoced = grid.GetNeighBoursForForced(currentNode, tempNodes);
-                tempNodes.AddRange(neighboursFoced.tempPositions);
+                var neighboursFoced = grid.GetNeighBoursForForced(currentNode, tempNodes, type);
+                tempNodes = neighboursFoced.tempPositions;
                 neighbours = neighboursFoced.neighbours;
             }
             else
             {
-                neighbours = grid.GetNeighBoursFor(currentNode);
+                neighbours = grid.GetNeighBoursFor(currentNode, type);
             }
 
             foreach (Vector3Int neighbourPosition in neighbours)
             {
-                if (gridService.IsTileAnObstacle(neighbourPosition))
+                if (!forcedNeibourhood && gridService.IsTileAnObstacle(neighbourPosition))
                 {
                     continue;
                 }
@@ -68,15 +68,10 @@ public class GraphSearch
 
         grid.RemoveTemporaryNodes(tempNodes);
 
-        foreach (var node in tempNodes)
-        {
-            visitedNodes.Remove(node);
-        }
-
         return new BFSResult { visitedNodesDict = visitedNodes };
     }
 
-    public BFSResult BFSGetRange(IGrid grid, Vector3Int startPoint, int movementPoints)
+    public BFSResult BFSGetRange(IGrid grid, Vector3Int startPoint, int movementPoints, NeighbourhoodType type)
     {
         Dictionary<Vector3Int, Vector3Int?> visitedNodes = new Dictionary<Vector3Int, Vector3Int?>();
         Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
@@ -92,7 +87,7 @@ public class GraphSearch
         {
             Vector3Int currentNode = nodesToVisitQueue.Dequeue();
 
-            foreach (Vector3Int neighbourPosition in grid.GetNeighBoursFor(currentNode))
+            foreach (Vector3Int neighbourPosition in grid.GetNeighBoursFor(currentNode, type))
             {
                 if (gridService.IsTileAnObstacle(neighbourPosition))
                 {
@@ -168,7 +163,7 @@ public class BFSResult
         return (path, cost);
     }
 
-    public bool IsHexPositionInRange(Vector3Int position)
+    public bool IsTilePositionInRange(Vector3Int position)
     {
         return visitedNodesDict.ContainsKey(position);
     }

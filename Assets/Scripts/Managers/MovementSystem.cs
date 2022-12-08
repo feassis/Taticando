@@ -1,4 +1,5 @@
 using MVC.Controler.Combat;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ public class MovementSystem
     {
         var graphSearchService = ServiceLocator.GetService<GraphSearch>();
         movementRange = graphSearchService.BFSGetRange(grid,
-            grid.GetClosestTile(selectedUnit.transform.position), selectedUnit.MovementPoints);
+            grid.GetClosestTile(selectedUnit.transform.position), selectedUnit.MovementPoints, NeighbourhoodType.Cross);
     }
 
     public void ShowPath(Vector3Int selectedHexPosition, IGrid grid)
@@ -73,9 +74,9 @@ public class MovementSystem
         selectedUnit.MovementFinished += UnitMovementFinished;
     }
 
-    public void RotateInPlace(UnitGraphics selectedUnit, RotationOrientarition direction)
+    public void RotateInPlace(UnitGraphics selectedUnit, RotationOrientarition direction, Action onRotationFinished)
     {
-        selectedUnit.RotateInPlace(direction);
+        selectedUnit.RotateInPlace(direction, onRotationFinished);
     }
 
     private void UnitMovementFinished(UnitGraphics unit)
@@ -87,7 +88,7 @@ public class MovementSystem
 
     public bool IsTileInRange(Vector3Int hexPosition)
     {
-        return movementRange.IsHexPositionInRange(hexPosition);
+        return movementRange.IsTilePositionInRange(hexPosition);
     }
 }
 

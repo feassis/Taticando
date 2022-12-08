@@ -9,6 +9,11 @@ using UnityEngine;
 public class UnitGraphics : MonoBehaviour
 {
     [SerializeField] private TeamEnum team;
+    [SerializeField] private GridCoordinates coords;
+
+    [SerializeField] private int actionDistance; //remove this once character can be seted up out of scene
+    [SerializeField] private NeighbourhoodType neighbourhoodType; //remove this once character can be seted up out of scene
+    [SerializeField] private int actionRangeAmount; //remove this once character can be seted up out of scene
 
     public int MovementPoints { get => ServiceLocator.GetService<CombatManager>().GetUnitMovementPoints(gameObject); }
 
@@ -17,10 +22,11 @@ public class UnitGraphics : MonoBehaviour
 
     private GlowHighlight glowHighlight;
     private Queue<Vector3> pathPositions = new Queue<Vector3>();
-    public Vector2Int CurrentUnitPosition;
     private bool isRotatingInPlace = false;
 
     public event Action<UnitGraphics> MovementFinished;
+
+    private BFSResult actionRange = new BFSResult();
 
     private void Awake()
     {
@@ -44,6 +50,58 @@ public class UnitGraphics : MonoBehaviour
     public void Select()
     {
         glowHighlight.ToggleGlow(true);
+    }
+
+    public void ResetActionRange(IGrid grid)
+    {
+        if(actionRange == null)
+        {
+            return;
+        }
+
+        foreach (var position in actionRange.GetRangePositions())
+        {
+            var tile = grid.GetTileAt(position);
+            
+            if(tile != null)
+            {
+                tile.ResetActionHightlight();
+            }
+        }
+
+        actionRange = new BFSResult();
+    }
+
+    public void ShowActionRange(IGrid grid)
+    {
+        ResetActionRange(grid);
+
+        var startPosition = CalculateActionOrigin(coords.GetCoords() + new Vector3Int(0, -1, 0), GetRotationDirection());// -1 unit offset, remove magic number
+
+        var graphSearch = ServiceLocator.GetService<GraphSearch>();
+
+        actionRange = graphSearch.BFSRangeAllCosts1(grid, startPosition, actionRangeAmount, neighbourhoodType, true);
+
+        foreach (var position in actionRange.GetRangePositions())
+        {
+            var tile = grid.GetTileAt(position);
+
+            if(tile != null)
+            {
+                tile.HighlightActionRange();
+            }
+        }
+    }
+
+    private Vector3Int CalculateActionOrigin(Vector3Int currentCoordinates, CardinalDirection direction)
+    {
+        return direction switch
+        {
+            CardinalDirection.Up => currentCoordinates + new Vector3Int(0, 0, actionDistance),
+            CardinalDirection.Down => currentCoordinates + new Vector3Int(0, 0, -actionDistance),
+            CardinalDirection.Right => currentCoordinates + new Vector3Int(actionDistance, 0, 0),
+            CardinalDirection.Left => currentCoordinates + new Vector3Int(-actionDistance, 0, 0),
+        };
     }
 
     public void MoveThroughPath(List<Vector3> currentPath, int currentCost)
@@ -78,7 +136,7 @@ public class UnitGraphics : MonoBehaviour
         StartCoroutine(MovementCoroutine(endPosition));
     }
 
-    private IEnumerator RotationCoroutine(RotationOrientarition direction, float rotationDuration)
+    private IEnumerator RotationCoroutine(RotationOrientarition direction, float rotationDuration, Action onRotarionFinished)
     {
         Quaternion startRotation = transform.rotation;
 
@@ -105,10 +163,11 @@ public class UnitGraphics : MonoBehaviour
             }
         }
 
+        onRotarionFinished?.Invoke();
         isRotatingInPlace = false;
     }
 
-    public void RotateInPlace(RotationOrientarition direction)
+    public void RotateInPlace(RotationOrientarition direction, Action onRotationFinished)
     {
         if (isRotatingInPlace)
         {
@@ -117,10 +176,32 @@ public class UnitGraphics : MonoBehaviour
 
         isRotatingInPlace = true;
 
-        StartCoroutine(RotationCoroutine(direction, rotationDuration));
+        StartCoroutine(RotationCoroutine(direction, rotationDuration, onRotationFinished));
     }
 
+    private CardinalDirection GetRotationDirection()
+    {
+        int rotationDegrees = Mathf.RoundToInt(transform.rotation.eulerAngles.y);
 
+        int reaminigValue = rotationDegrees / 90 % 4;
+
+        return reaminigValue switch
+        {
+            0 => CardinalDirection.Up,
+            1 => CardinalDirection.Right,
+            2 => CardinalDirection.Down,
+            3 => CardinalDirection.Left,
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    private enum CardinalDirection
+    {
+        Up = 0,
+        Right = 1,
+        Down = 2,
+        Left = 3
+    }
 
     private IEnumerator MovementCoroutine(Vector3 endPosition)
     {
