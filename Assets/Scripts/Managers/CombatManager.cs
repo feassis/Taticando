@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tools;
 using UnityEngine;
 
 namespace MVC.Controler.Combat
@@ -15,6 +16,8 @@ namespace MVC.Controler.Combat
 
         public Team GetCurrentTeamTurn() => currentTeamTurnIndex == 0 ? InCombatTeams[0] : InCombatTeams[currentTeamTurnIndex % InCombatTeams.Count];
 
+        public Action<TeamEnum> OnTeamTurnStart;
+
         public void CheckTeamHasActionsToDo()
         {
             if (!GetCurrentTeamTurn().HasActionsToDo())
@@ -28,6 +31,7 @@ namespace MVC.Controler.Combat
             currentTeamTurnIndex++;
             ResetTeamUnitsTurn();
             OnTurnChange?.Invoke();
+            OnTeamTurnStart?.Invoke(GetCurrentTeamTurn().MyTeam);
         }
 
         public void AddUnitToTeam(TeamEnum desiredTeam, GameObject unitGraphicsObject)
@@ -50,6 +54,15 @@ namespace MVC.Controler.Combat
             unitModel.SpentMovementPoints(cost);
         }
 
+        public void ExecuteActionOfSelectedUnit()
+        {
+            var unitManager = ServiceLocator.GetService<UnitManager>();
+            unitManager.UseSelectedUnityAction();
+            var unitModel = GetUnitOfATeam(unitManager.GetSelectedUnitReference());
+            unitModel.SpentActionPoints(1);//this number will change after implementation o tool to creat characters
+            CheckTeamHasActionsToDo();
+        }
+
         public bool IsThisUnitTurn(GameObject unit)
         {
             var team = GetCurrentTeamTurn();
@@ -68,6 +81,22 @@ namespace MVC.Controler.Combat
             }
 
             return unit.GetCurrentMovementPoints();
+        }
+
+        public TeamEnum GetTeamOfAUnit(GameObject desiredUnit)
+        {
+            foreach (var team in InCombatTeams)
+            {
+                foreach (var unit in team.UnitsInCombat)
+                {
+                    if(unit.UnitOnScene == desiredUnit)
+                    {
+                        return team.MyTeam;
+                    }
+                }
+            }
+
+            return TeamEnum.None;
         }
 
         private List<UnitInCombat> GetUnitsOfATeam(TeamEnum teamEnum)

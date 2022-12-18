@@ -1,4 +1,5 @@
 using MVC.Controler.Combat;
+using MVC.View.Unit;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,8 +16,13 @@ public class UnitManager
     public static UnitManager Create(CombatManager combatManager)
     {
         var unitManager = new UnitManager();
-        combatManager.OnTurnChange += unitManager.HideMovementRange;
+        combatManager.OnTurnChange += unitManager.ClearOldSelection;
         return unitManager;
+    }
+
+    public GameObject GetSelectedUnitReference()
+    {
+        return selectedUnit.gameObject;
     }
 
     public void HandleUnitSelected(GameObject unit)
@@ -38,8 +44,18 @@ public class UnitManager
 
     public void ShowUnitActionRange()
     {
+        if(selectedUnit == null)
+        {
+            return;
+        }
+
         var grid = ServiceLocator.GetService<IGrid>();
         selectedUnit.ShowActionRange(grid);
+    }
+
+    public void UseSelectedUnityAction()
+    {
+        selectedUnit.UseUnitAction(); //should be only visuals
     }
 
     private bool IsUnitsTurn(GameObject unit)
@@ -96,7 +112,7 @@ public class UnitManager
         movementSystem.MoveUnit(selectedUnit, grid);
         canMoving = false;
         selectedUnit.MovementFinished += FinishMovement;
-        ClearOldSelection();
+        HideMovementRange();
     }
 
     private void FinishMovement(UnitGraphics obj)
@@ -156,15 +172,17 @@ public class UnitManager
     public void ClearOldSelection()
     {
         Debug.Log("Clear");
-        var grid = ServiceLocator.GetService<IGrid>();
         previousSelectedTile = null;
 
         if(selectedUnit != null)
         {
             selectedUnit.Deselect();
+            selectedUnit.ResetActionRange();
         }
-        
-        ServiceLocator.GetService<MovementSystem>().HideRange(grid);
+
+        HideMovementRange();
+        ServiceLocator.GetService<IGrid>().ResetNeighbourhoodTileDicts();
+
         selectedUnit = null;
     }
 }

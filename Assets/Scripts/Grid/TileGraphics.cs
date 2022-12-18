@@ -1,3 +1,4 @@
+using MVC.Controler.Combat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,6 +34,13 @@ public class TileGraphics : MonoBehaviour
     private void Start()
     {
         ServiceLocator.GetService<GridService>().OnElementApplied += UpdateElementsVisibility;
+        ServiceLocator.GetService<CombatManager>().OnTeamTurnStart += UpdateTileOnTurnStart;
+
+    }
+
+    private void UpdateTileOnTurnStart(TeamEnum team)
+    {
+        UpdateElementsVisibility();
     }
 
     private void UpdateElementsVisibility()
@@ -73,5 +81,6 @@ public class TileGraphics : MonoBehaviour
     private void OnDestroy()
     {
         ServiceLocator.GetService<GridService>().OnElementApplied -= UpdateElementsVisibility;
+        ServiceLocator.GetService<CombatManager>().OnTeamTurnStart -= UpdateTileOnTurnStart;
     }
 }

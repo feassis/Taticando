@@ -86,8 +86,9 @@ public class GraphSearch
         while (nodesToVisitQueue.Count > 0)
         {
             Vector3Int currentNode = nodesToVisitQueue.Dequeue();
+            var neighbours = grid.GetNeighBoursFor(currentNode, type);
 
-            foreach (Vector3Int neighbourPosition in grid.GetNeighBoursFor(currentNode, type))
+            foreach (Vector3Int neighbourPosition in neighbours)
             {
                 if (gridService.IsTileAnObstacle(neighbourPosition))
                 {

@@ -1,4 +1,5 @@
 using MVC.Controler.Combat;
+using MVC.View.Unit;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ public class MovementSystem
 
     private void CalculateRange(UnitGraphics selectedUnit, IGrid grid)
     {
+        movementRange = new BFSResult();
         var graphSearchService = ServiceLocator.GetService<GraphSearch>();
         movementRange = graphSearchService.BFSGetRange(grid,
             grid.GetClosestTile(selectedUnit.transform.position), selectedUnit.MovementPoints, NeighbourhoodType.Cross);

@@ -13,6 +13,11 @@ public class SquareGrid : MonoBehaviour, IGrid
         ServiceLocator.RegisterService<IGrid>(this);
     }
 
+    public void ResetNeighbourhoodTileDicts()
+    {
+        tileNeighboursDict = new Dictionary<Vector3Int, List<Vector3Int>>();
+    }
+
     private void Start()
     {
         var gridService = ServiceLocator.GetService<GridService>();
@@ -196,6 +201,7 @@ public enum NeighbourhoodType
 
 public interface IGrid
 {
+    void ResetNeighbourhoodTileDicts();
     TileGraphics GetTileAt(Vector3Int coordinates);
     List<Vector3Int> GetNeighBoursFor(Vector3Int coordinate, NeighbourhoodType type);
     (List<Vector3Int> tempPositions, List<Vector3Int> neighbours) GetNeighBoursForForced(Vector3Int coordinate, List<Vector3Int> tempPositions, NeighbourhoodType type);

@@ -24,11 +24,16 @@ public class GridService
         tileDict.Add(position, new TileModel(type));
     }
 
-    public void ApplyElementToTiles(List<Vector3Int> positions, ElementsEnum element)
+    public void ApplyElementToTiles(List<Vector3Int> positions, ElementsEnum element, TeamEnum team)
     {
         foreach (var pos in positions)
         {
-            tileDict[pos].ApplyElement(element);
+            if(tileDict[pos] == null)
+            {
+                continue;
+            }
+
+            tileDict[pos].ApplyElement(element, team);
         }
 
         OnElementApplied?.Invoke();

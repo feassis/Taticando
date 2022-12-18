@@ -13,6 +13,7 @@ public class CombatUIGraphics : MonoBehaviour
     [SerializeField] private Button actionButton;
     [SerializeField] private Button turnLeftButton;
     [SerializeField] private Button turnRightButton;
+    [SerializeField] private Button useActionButton;
 
     private void Start()
     {
@@ -21,10 +22,18 @@ public class CombatUIGraphics : MonoBehaviour
         combatManager.OnTurnChange += ResetActionButton;
         UpdateTeamText();
         combatManager.OnTurnChange += UpdateTeamText;
+
+        SetupButtons();
+    }
+
+    private void SetupButtons()
+    {
         actionButton.onClick.AddListener(OnActionButtonClicked);
         turnRightButton.onClick.AddListener(OnTurnRightButton);
         turnLeftButton.onClick.AddListener(OnTurnLeftButton);
+        useActionButton.onClick.AddListener(OnUseActionButtonClicked);
     }
+
     private void UpdateTeamText()
     {
         var combatManager = ServiceLocator.GetService<CombatManager>();
@@ -50,6 +59,12 @@ public class CombatUIGraphics : MonoBehaviour
         actionButton.gameObject.SetActive(false);
         turnLeftButton.gameObject.SetActive(true);
         turnRightButton.gameObject.SetActive(true);
+        useActionButton.gameObject.SetActive(true);
+    }
+
+    private void OnUseActionButtonClicked()
+    {
+        ServiceLocator.GetService<CombatManager>().ExecuteActionOfSelectedUnit();
     }
 
     private void ResetActionButton()
@@ -57,6 +72,7 @@ public class CombatUIGraphics : MonoBehaviour
         actionButton.gameObject.SetActive(true);
         turnLeftButton.gameObject.SetActive(false);
         turnRightButton.gameObject.SetActive(false);
+        useActionButton.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
