@@ -99,6 +99,52 @@ namespace MVC.Controler.Combat
             return TeamEnum.None;
         }
 
+        public void SubscribeActionToUnitOnDamage(GameObject desiredUnit, Action<int, int> onDamage)
+        {
+            var unit = GetUnitInCombat(desiredUnit);
+
+            unit.UnitData.OnDamageReceived += onDamage;
+        }
+
+        public void DamageUnit(GameObject desiredUnit, int dmg)
+        {
+            var unit = GetUnitInCombat(desiredUnit);
+
+            unit.UnitData.ApplyDamage(dmg);
+        }
+
+        public (int currentHp, int maxHP) GetUnitHPStatus(GameObject desiredUnit)
+        {
+            var unit = GetUnitInCombat(desiredUnit);
+
+            return (unit.UnitData.GetCurrentHP(), unit.UnitData.GetMaxHp());
+        }
+
+        public void DamageRandomUnitOfCurrentTeam()
+        {
+            var team = GetCurrentTeamTurn();
+
+            int randomIndex = UnityEngine.Random.Range(0, team.UnitsInCombat.Count);
+
+            team.UnitsInCombat[randomIndex].UnitData.ApplyDamage(1);
+        }
+
+        private UnitInCombat GetUnitInCombat(GameObject desiredUnit)
+        {
+            foreach (var team in InCombatTeams)
+            {
+                foreach (UnitInCombat unit in team.UnitsInCombat)
+                {
+                    if (unit.UnitOnScene == desiredUnit)
+                    {
+                        return unit;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         private List<UnitInCombat> GetUnitsOfATeam(TeamEnum teamEnum)
         {
             var units = new List<UnitInCombat>();

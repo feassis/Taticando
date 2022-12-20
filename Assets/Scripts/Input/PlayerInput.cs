@@ -1,3 +1,4 @@
+using MVC.Controler.Combat;
 using System;
 using System.Collections.Generic;
 using Tools;
@@ -10,6 +11,7 @@ public class PlayerInput : MonoBehaviour
     void Update()
     {
         DetectPlayerClick();
+        DetectSpaceBarDown();
     }
 
     private void DetectPlayerClick()
@@ -25,6 +27,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            ServiceLocator.GetService<CombatManager>().DamageRandomUnitOfCurrentTeam();
         }
     }
 

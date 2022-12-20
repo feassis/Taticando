@@ -17,6 +17,7 @@ namespace MVC.View.Unit
         [SerializeField] private NeighbourhoodType neighbourhoodType; //remove this once character can be seted up out of scene
         [SerializeField] private int actionRangeAmount; //remove this once character can be seted up out of scene
         [SerializeField] private UnitActionVisuals action;
+        [SerializeField] private HealthBarGraphics hpBar;
 
         public int MovementPoints { get => ServiceLocator.GetService<CombatManager>().GetUnitMovementPoints(gameObject); }
 
@@ -43,6 +44,10 @@ namespace MVC.View.Unit
         {
             var combatManager = ServiceLocator.GetService<CombatManager>();
             combatManager.AddUnitToTeam(team, gameObject);
+            combatManager.SubscribeActionToUnitOnDamage(gameObject, hpBar.UpdateHealthbar);
+
+            (int currentHp, int maxHP) hpStatus = combatManager.GetUnitHPStatus(gameObject);
+            hpBar.Setup(hpStatus.currentHp, hpStatus.maxHP);
         }
 
         public BFSResult GetCurrentActionRange()
