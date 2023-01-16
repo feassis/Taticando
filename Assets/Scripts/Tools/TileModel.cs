@@ -32,9 +32,9 @@ public class TileModel
         return elements.IsTileAfflictedByElement(element);
     }
 
-    public void ApplyElement(ElementsEnum elementsEnum, TeamEnum team)
+    public void ApplyElement(ElementsEnum elementsEnum)
     {
-        elements.AddElement(elementsEnum, team, 1);
+        elements.AddElement(elementsEnum, 1);
         ServiceLocator.GetService<CombatManager>().OnTeamTurnStart += StartOfTurnTick;
         Debug.Log($"Element {elements.Elements}, shold have {elementsEnum}");
     }
@@ -46,7 +46,7 @@ public class TileModel
 
     public void StartOfTurnTick(TeamEnum team)
     {
-        if(team == elements.Team)
+        if(team == TeamEnum.Blue)
         {
             elements.ConsumeDuration(1);
         }
@@ -61,13 +61,11 @@ public class TileModel
 public class ElementsModel
 {
     public ElementsEnum Elements;
-    public TeamEnum Team;
     public int Duration;
 
-    public void AddElement(ElementsEnum element, TeamEnum team, int charges)
+    public void AddElement(ElementsEnum element, int charges)
     {
         Elements |= element;
-        Team = team;
         Duration = Mathf.Max(charges, Duration);
     }
 

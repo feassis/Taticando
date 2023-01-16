@@ -8,15 +8,11 @@ public class GridCoordinates : MonoBehaviour
     public static float YOffset = 1.0f;
     public static float ZOffset = -0.5f;
 
-    internal Vector3Int GetCoords() => offsetCoordinates;
-
-    [Header("Offset Coordinates")]
-    [SerializeField]
-    private Vector3Int offsetCoordinates;
+    internal Vector3Int GetCoords() => ConversPositionToOffset(transform.position);
 
     private void Awake()
     {
-        offsetCoordinates = ConversPositionToOffset(transform.position);
+        var offsetCoordinates = GetCoords();
         gameObject.name = $"{gameObject.name} - (x: {offsetCoordinates.x},y: {offsetCoordinates.y},z: {offsetCoordinates.z})";
     }
 

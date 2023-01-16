@@ -8,6 +8,9 @@ using UnityEngine;
 public class ApplyElementOnUnitActionRange : UnitActionVisuals
 {
     [SerializeField] private ElementsEnum element;
+
+    [SerializeField]
+    private bool spreadElementsOnTile;
     public override void Execute(UnitGraphics unit)
     {
         var actionRange = unit.GetCurrentActionRange();
@@ -23,9 +26,14 @@ public class ApplyElementOnUnitActionRange : UnitActionVisuals
 
         var combatManager = ServiceLocator.GetService<CombatManager>();
 
-        var team = combatManager.GetTeamOfAUnit(unit.gameObject);
+        var team = combatManager.GetTeamOfAUnit(unit);
 
-        gridservice.ApplyElementToTiles(tilesToApplyElements, element, team);
+        combatManager.ApplyElementOnUnits(tilesToApplyElements, element);
+
+        if (spreadElementsOnTile)
+        {
+            gridservice.ApplyElementToTiles(tilesToApplyElements, element);
+        }
     }
 }
 

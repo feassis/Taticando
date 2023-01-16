@@ -10652,5 +10652,10 @@ PrefabInstance:
       propertyPath: neighbourhoodType
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 7081179192984600543, guid: 85232fbd9f4236b489c0a6d86d8c7cdd,
+        type: 3}
+      propertyPath: isUnit
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85232fbd9f4236b489c0a6d86d8c7cdd, type: 3}

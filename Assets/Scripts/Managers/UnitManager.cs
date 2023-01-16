@@ -20,19 +20,19 @@ public class UnitManager
         return unitManager;
     }
 
-    public GameObject GetSelectedUnitReference()
+    public UnitGraphics GetSelectedUnitReference()
     {
-        return selectedUnit.gameObject;
+        return selectedUnit;
     }
 
     public void HandleUnitSelected(GameObject unit)
     {
-        if (!IsUnitsTurn(unit))
+        UnitGraphics unitReference = unit.GetComponent<UnitGraphics>();
+
+        if (!IsUnitsTurn(unitReference))
         {
             return;
         }
-
-        UnitGraphics unitReference = unit.GetComponent<UnitGraphics>();
 
         if (CheckIfTheSameUnitSelected(unitReference))
         {
@@ -58,7 +58,7 @@ public class UnitManager
         selectedUnit.UseUnitAction(); //should be only visuals
     }
 
-    private bool IsUnitsTurn(GameObject unit)
+    private bool IsUnitsTurn(UnitGraphics unit)
     {
         var combatManget = ServiceLocator.GetService<CombatManager>();
 

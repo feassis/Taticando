@@ -18,8 +18,9 @@ namespace MVC.View.Unit
         [SerializeField] private int actionRangeAmount; //remove this once character can be seted up out of scene
         [SerializeField] private UnitActionVisuals action;
         [SerializeField] private HealthBarGraphics hpBar;
+        [SerializeField] private UnitElementGraphics unitElemets;
 
-        public int MovementPoints { get => ServiceLocator.GetService<CombatManager>().GetUnitMovementPoints(gameObject); }
+        public int MovementPoints { get => ServiceLocator.GetService<CombatManager>().GetUnitMovementPoints(this); }
 
         [SerializeField]
         private float movementDuration = 1, rotationDuration = 0.3f;
@@ -43,10 +44,10 @@ namespace MVC.View.Unit
         private void Start()
         {
             var combatManager = ServiceLocator.GetService<CombatManager>();
-            combatManager.AddUnitToTeam(team, gameObject);
-            combatManager.SubscribeActionToUnitOnDamage(gameObject, hpBar.UpdateHealthbar);
+            combatManager.AddUnitToTeam(team, this);
+            combatManager.SubscribeActionToUnitOnDamage(this, hpBar.UpdateHealthbar);
 
-            (int currentHp, int maxHP) hpStatus = combatManager.GetUnitHPStatus(gameObject);
+            (int currentHp, int maxHP) hpStatus = combatManager.GetUnitHPStatus(this);
             hpBar.Setup(hpStatus.currentHp, hpStatus.maxHP);
         }
 
@@ -133,8 +134,18 @@ namespace MVC.View.Unit
             var combatManager = ServiceLocator.GetService<CombatManager>();
             pathPositions = new Queue<Vector3>(currentPath);
             Vector3 firstTarget = pathPositions.Dequeue();
-            combatManager.SpendMovementPointsOfAUnit(gameObject, currentCost);
+            combatManager.SpendMovementPointsOfAUnit(this, currentCost);
             StartCoroutine(RotationCoroutine(firstTarget, rotationDuration));
+        }
+
+        public Vector3Int GetMyTilePosition()
+        {
+            return coords.GetCoords() - new Vector3Int(0, 1, 0);
+        }
+
+        public void UpdateElementVisibility(ElementsEnum element)
+        {
+            unitElemets.UpdateElementsVisibility(element);
         }
 
         private IEnumerator RotationCoroutine(Vector3 endPosition, float rotationDuration)

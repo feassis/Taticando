@@ -42,6 +42,7 @@ public class MovementSystem
 
     private void CalculateRange(UnitGraphics selectedUnit, IGrid grid)
     {
+        currentPath.Clear();
         movementRange = new BFSResult();
         var graphSearchService = ServiceLocator.GetService<GraphSearch>();
         movementRange = graphSearchService.BFSGetRange(grid,
@@ -83,6 +84,7 @@ public class MovementSystem
 
     private void UnitMovementFinished(UnitGraphics unit)
     {
+        currentPath.Clear();
         var combatManager = ServiceLocator.GetService<CombatManager>();
 
         combatManager.CheckTeamHasActionsToDo();

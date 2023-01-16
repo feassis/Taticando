@@ -1,3 +1,4 @@
+using MVC.View.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace MVC.Controler.Combat
             OnTeamTurnStart?.Invoke(GetCurrentTeamTurn().MyTeam);
         }
 
-        public void AddUnitToTeam(TeamEnum desiredTeam, GameObject unitGraphicsObject)
+        public void AddUnitToTeam(TeamEnum desiredTeam, UnitGraphics unitGraphicsObject)
         {
             Team selectedTeam = InCombatTeams.Find(t => t.MyTeam == desiredTeam);
 
@@ -45,10 +46,10 @@ namespace MVC.Controler.Combat
                 InCombatTeams.Add(selectedTeam);
             }
 
-            selectedTeam.UnitsInCombat.Add(new UnitInCombat(unitGraphicsObject));
+            selectedTeam.UnitsInCombat.Add(new UnitInCombat(unitGraphicsObject, desiredTeam));
         }
 
-        public void SpendMovementPointsOfAUnit(GameObject unitObject, int cost)
+        public void SpendMovementPointsOfAUnit(UnitGraphics unitObject, int cost)
         {
             var unitModel = GetUnitOfATeam(unitObject);
             unitModel.SpentMovementPoints(cost);
@@ -59,18 +60,18 @@ namespace MVC.Controler.Combat
             var unitManager = ServiceLocator.GetService<UnitManager>();
             unitManager.UseSelectedUnityAction();
             var unitModel = GetUnitOfATeam(unitManager.GetSelectedUnitReference());
-            unitModel.SpentActionPoints(1);//this number will change after implementation o tool to creat characters
+            unitModel.SpentActionPoints(1);//this number will change after implementation o tool to create characters
             CheckTeamHasActionsToDo();
         }
 
-        public bool IsThisUnitTurn(GameObject unit)
+        public bool IsThisUnitTurn(UnitGraphics unit)
         {
             var team = GetCurrentTeamTurn();
 
             return team.IsUnitOnTeam(unit);
         }
 
-        public int GetUnitMovementPoints(GameObject desiredUnit)
+        public int GetUnitMovementPoints(UnitGraphics desiredUnit)
         {
             UnitModel unit = GetUnitOfATeam(desiredUnit);
 
@@ -83,7 +84,7 @@ namespace MVC.Controler.Combat
             return unit.GetCurrentMovementPoints();
         }
 
-        public TeamEnum GetTeamOfAUnit(GameObject desiredUnit)
+        public TeamEnum GetTeamOfAUnit(UnitGraphics desiredUnit)
         {
             foreach (var team in InCombatTeams)
             {
@@ -99,21 +100,35 @@ namespace MVC.Controler.Combat
             return TeamEnum.None;
         }
 
-        public void SubscribeActionToUnitOnDamage(GameObject desiredUnit, Action<int, int> onDamage)
+        public void ApplyElementOnUnits(List<Vector3Int> unitsAffectedPosition, ElementsEnum element)
+        {
+            var unitsOnField = GetUnitsOnField();
+
+            foreach (UnitInCombat unit in unitsOnField)
+            {
+                Vector3Int unitCoord = unit.UnitOnScene.GetMyTilePosition();
+                if (unitsAffectedPosition.Contains(unitCoord))
+                {
+                    unit.ApplyElement(element);
+                }
+            }
+        }
+
+        public void SubscribeActionToUnitOnDamage(UnitGraphics desiredUnit, Action<int, int> onDamage)
         {
             var unit = GetUnitInCombat(desiredUnit);
 
             unit.UnitData.OnDamageReceived += onDamage;
         }
 
-        public void DamageUnit(GameObject desiredUnit, int dmg)
+        public void DamageUnit(UnitGraphics desiredUnit, int dmg)
         {
             var unit = GetUnitInCombat(desiredUnit);
 
             unit.UnitData.ApplyDamage(dmg);
         }
 
-        public (int currentHp, int maxHP) GetUnitHPStatus(GameObject desiredUnit)
+        public (int currentHp, int maxHP) GetUnitHPStatus(UnitGraphics desiredUnit)
         {
             var unit = GetUnitInCombat(desiredUnit);
 
@@ -129,7 +144,7 @@ namespace MVC.Controler.Combat
             team.UnitsInCombat[randomIndex].UnitData.ApplyDamage(1);
         }
 
-        private UnitInCombat GetUnitInCombat(GameObject desiredUnit)
+        private UnitInCombat GetUnitInCombat(UnitGraphics desiredUnit)
         {
             foreach (var team in InCombatTeams)
             {
@@ -172,7 +187,18 @@ namespace MVC.Controler.Combat
             }
         }
 
-        private UnitModel GetUnitOfATeam(GameObject desiredUnit)
+        private List<UnitInCombat> GetUnitsOnField()
+        {
+            List<UnitInCombat> units = new List<UnitInCombat>();
+            foreach (var team in InCombatTeams)
+            {
+                units.AddRange(team.UnitsInCombat);
+            }
+
+            return units;
+        }
+
+        private UnitModel GetUnitOfATeam(UnitGraphics desiredUnit)
         {
             foreach (var team in InCombatTeams)
             {
@@ -207,7 +233,7 @@ namespace MVC.Controler.Combat
             return false;
         }
 
-        public bool IsUnitOnTeam(GameObject unit)
+        public bool IsUnitOnTeam(UnitGraphics unit)
         {
             foreach (var unitInCombat in UnitsInCombat)
             {
@@ -223,13 +249,22 @@ namespace MVC.Controler.Combat
 
     public class UnitInCombat
     {
-        public GameObject UnitOnScene; //this will probably change to a ID system when unit spawn is decided
+        public UnitGraphics UnitOnScene;
         public UnitModel UnitData;
 
-        public UnitInCombat(GameObject unitGraphicsObject)
+        public UnitInCombat(UnitGraphics unitGraphicsObject, TeamEnum team)
         {
             UnitOnScene = unitGraphicsObject;
-            UnitData = new UnitModel();
+            UnitData = new UnitModel(team);
+        }
+
+        public void ApplyElement(ElementsEnum element)
+        {
+            UnitData.ApplyElement(element, 1);
+
+            //call element effects here
+
+            UnitOnScene.UpdateElementVisibility(UnitData.GetElementsOnUnit());
         }
     }
 }

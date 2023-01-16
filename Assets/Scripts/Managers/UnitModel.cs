@@ -11,13 +11,31 @@ public class UnitModel
     private int currentActionpoints = 1; //when spawn is made remoce this value initialization
     private int currentHP = 10;
 
+    private ElementsModel elements = new ElementsModel();
+    private TeamEnum team;
+
     public Action<int, int> OnDamageReceived;
+
+    public UnitModel(TeamEnum team)
+    {
+        this.team = team;
+    }
 
     public void ResetUnitTurn()
     {
         currentMovementpoints = movementPoints;
         currentActionpoints = actionPoints;
         currentHP = maxHp;
+    }
+
+    public void ApplyElement(ElementsEnum elementType, int charges)
+    {
+        elements.AddElement(elementType, charges);
+    }
+
+    public ElementsEnum GetElementsOnUnit()
+    {
+        return elements.Elements;
     }
 
     public bool HasActionsToDo()
