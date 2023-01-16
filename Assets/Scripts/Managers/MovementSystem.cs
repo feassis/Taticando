@@ -85,6 +85,7 @@ public class MovementSystem
     private void UnitMovementFinished(UnitGraphics unit)
     {
         currentPath.Clear();
+        movementRange = new BFSResult();
         var combatManager = ServiceLocator.GetService<CombatManager>();
 
         combatManager.CheckTeamHasActionsToDo();
