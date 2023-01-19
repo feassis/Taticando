@@ -102,16 +102,29 @@ namespace MVC.Controler.Combat
 
         public void ApplyElementOnUnits(List<Vector3Int> unitsAffectedPosition, ElementsEnum element)
         {
+            var unitsOnRange = GetUnitsOnRange(unitsAffectedPosition);
+
+            foreach (UnitInCombat unit in unitsOnRange)
+            {
+                unit.ApplyElement(element);
+            }
+        }
+
+        public List<UnitInCombat> GetUnitsOnRange(List<Vector3Int> unitsAffectedPosition)
+        {
             var unitsOnField = GetUnitsOnField();
+            List<UnitInCombat> unitsOnRange = new List<UnitInCombat>();
 
             foreach (UnitInCombat unit in unitsOnField)
             {
                 Vector3Int unitCoord = unit.UnitOnScene.GetMyTilePosition();
                 if (unitsAffectedPosition.Contains(unitCoord))
                 {
-                    unit.ApplyElement(element);
+                    unitsOnRange.Add(unit);
                 }
             }
+
+            return unitsOnRange;
         }
 
         public void SubscribeActionToUnitOnDamage(UnitGraphics desiredUnit, Action<int, int> onDamage)
@@ -198,7 +211,7 @@ namespace MVC.Controler.Combat
             return units;
         }
 
-        private UnitModel GetUnitOfATeam(UnitGraphics desiredUnit)
+        public UnitModel GetUnitOfATeam(UnitGraphics desiredUnit)
         {
             foreach (var team in InCombatTeams)
             {
@@ -251,6 +264,16 @@ namespace MVC.Controler.Combat
     {
         public UnitGraphics UnitOnScene;
         public UnitModel UnitData;
+
+        public int GetEstimatedDamage(int dmg)
+        {
+            return dmg; //change it after implementing shild system
+        }
+
+        public int ApplyDamage(int dmg)
+        {
+            return UnitData.ApplyDamage(dmg);
+        }
 
         public UnitInCombat(UnitGraphics unitGraphicsObject, TeamEnum team)
         {

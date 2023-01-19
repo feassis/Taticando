@@ -46,7 +46,7 @@ public class TileModel
 
     public void StartOfTurnTick(TeamEnum team)
     {
-        if(team == TeamEnum.Blue)
+        if(team == TeamEnum.Player)
         {
             elements.ConsumeDuration(1);
         }

@@ -1,6 +1,6 @@
 public enum TeamEnum
 {
     None = -1,
-    Blue = 0,
-    Red = 1
+    Player = 0,
+    Enemy = 1
 }

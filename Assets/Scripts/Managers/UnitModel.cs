@@ -11,9 +11,13 @@ public class UnitModel
     private int currentActionpoints = 1; //when spawn is made remoce this value initialization
     private int currentHP = 10;
 
+    private int attackPower = 1;
+
     private ElementsModel elements = new ElementsModel();
     private TeamEnum team;
 
+    public int GetAttackPowuer() => attackPower;
+    public TeamEnum GetTeam() => team;
     public Action<int, int> OnDamageReceived;
 
     public UnitModel(TeamEnum team)
@@ -61,11 +65,13 @@ public class UnitModel
     public int GetMaxHp() => maxHp;
     public int GetCurrentHP() => currentHP;
 
-    public void ApplyDamage(int dmg)
+    public int ApplyDamage(int dmg)
     {
         currentHP -= dmg;
         Mathf.Clamp(currentHP, 0, maxHp);
 
         OnDamageReceived?.Invoke(currentHP, maxHp);
+
+        return dmg;
     }
 }

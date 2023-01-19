@@ -13,10 +13,7 @@ namespace MVC.View.Unit
         [SerializeField] private TeamEnum team;
         [SerializeField] private GridCoordinates coords;
 
-        [SerializeField] private int actionDistance; //remove this once character can be seted up out of scene
-        [SerializeField] private NeighbourhoodType neighbourhoodType; //remove this once character can be seted up out of scene
-        [SerializeField] private int actionRangeAmount; //remove this once character can be seted up out of scene
-        [SerializeField] private UnitActionVisuals action;
+        [SerializeField] private UnitAction action;
         [SerializeField] private HealthBarGraphics hpBar;
         [SerializeField] private UnitElementGraphics unitElemets;
 
@@ -90,13 +87,16 @@ namespace MVC.View.Unit
 
         public void ShowActionRange(IGrid grid)
         {
+            ServiceLocator.GetService<IGrid>().ResetNeighbourhoodTileDicts();
             ResetActionRange();
 
-            var startPosition = CalculateActionOrigin(coords.GetCoords() + new Vector3Int(0, -1, 0), GetRotationDirection());// -1 unit offset, remove magic number
+            var startPosition = CalculateActionOrigin(GetMyTilePosition(), GetRotationDirection());
 
             var graphSearch = ServiceLocator.GetService<GraphSearch>();
 
-            actionRange = graphSearch.BFSRangeAllCosts1(grid, startPosition, actionRangeAmount, neighbourhoodType, true);
+            var actionInfo = action.GetRangeInfo();
+
+            actionRange = graphSearch.BFSRangeAllCosts1(grid, startPosition, actionInfo.ActionRangeAmount, actionInfo.NeighbourhoodType, true);
 
             foreach (var position in actionRange.GetRangePositions())
             {
@@ -119,12 +119,14 @@ namespace MVC.View.Unit
 
         private Vector3Int CalculateActionOrigin(Vector3Int currentCoordinates, CardinalDirection direction)
         {
+            var actionRange = action.GetRangeInfo();
+
             return direction switch
             {
-                CardinalDirection.Up => currentCoordinates + new Vector3Int(0, 0, actionDistance),
-                CardinalDirection.Down => currentCoordinates + new Vector3Int(0, 0, -actionDistance),
-                CardinalDirection.Right => currentCoordinates + new Vector3Int(actionDistance, 0, 0),
-                CardinalDirection.Left => currentCoordinates + new Vector3Int(-actionDistance, 0, 0),
+                CardinalDirection.Up => currentCoordinates + new Vector3Int(0, 0, actionRange.ActionDistance),
+                CardinalDirection.Down => currentCoordinates + new Vector3Int(0, 0, -actionRange.ActionDistance),
+                CardinalDirection.Right => currentCoordinates + new Vector3Int(actionRange.ActionDistance, 0, 0),
+                CardinalDirection.Left => currentCoordinates + new Vector3Int(-actionRange.ActionDistance, 0, 0),
                 _ => throw new NotImplementedException(),
             };
         }

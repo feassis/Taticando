@@ -5,13 +5,13 @@ using Tools;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Apply Element On Grid", menuName = "Units/Action/Graphics/Apply Elements On Grid")]
-public class ApplyElementOnUnitActionRange : UnitActionVisuals
+public class ApplyElementOnUnitActionRange : UnitAction
 {
     [SerializeField] private ElementsEnum element;
 
     [SerializeField]
     private bool spreadElementsOnTile;
-    public override void Execute(UnitGraphics unit)
+    public override int Execute(UnitGraphics unit)
     {
         var actionRange = unit.GetCurrentActionRange();
 
@@ -34,6 +34,8 @@ public class ApplyElementOnUnitActionRange : UnitActionVisuals
         {
             gridservice.ApplyElementToTiles(tilesToApplyElements, element);
         }
+
+        return 0;
     }
 }
 
