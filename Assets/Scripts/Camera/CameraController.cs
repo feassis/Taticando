@@ -108,7 +108,7 @@ public class CameraController : MonoBehaviour
 
             rotateStartPositon = rotateCurrentPositon;
 
-            newRotation *= Quaternion.Euler(Vector3.up * (-diference.y / 5f));
+            newRotation *= Quaternion.Euler(Vector3.up * (-diference.x / 5f));
         }
     }
 
