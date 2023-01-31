@@ -12,4 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebeeecedc77902e47b199374c0f550e7, type: 3}
   m_Name: ApplyHydro
   m_EditorClassIdentifier: 
+  actionInfo:
+    ActionDistance: 3
+    NeighbourhoodType: 0
+    ActionRangeAmount: 4
   element: 4
+  spreadElementsOnTile: 1

@@ -55,7 +55,8 @@ public class UnitManager
 
     public void UseSelectedUnityAction()
     {
-        selectedUnit.UseUnitAction(); //should be only visuals
+        selectedUnit.UseUnitAction(); 
+        ClearOldSelection();
     }
 
     private bool IsUnitsTurn(UnitGraphics unit)
@@ -77,8 +78,9 @@ public class UnitManager
         selectedUnit.Select();
 
         var grid = ServiceLocator.GetService<IGrid>();
+        var team = ServiceLocator.GetService<CombatManager>().GetTeamOfAUnit(selectedUnit);
 
-        ServiceLocator.GetService<MovementSystem>().ShowRange(selectedUnit, grid);
+        ServiceLocator.GetService<MovementSystem>().ShowRange(selectedUnit, grid, team);
     }
 
     public void HandleTerrainSelected(GameObject tile)
@@ -102,10 +104,12 @@ public class UnitManager
     {
         var movementSystem = ServiceLocator.GetService<MovementSystem>();
         var grid = ServiceLocator.GetService<IGrid>();
+        var team = ServiceLocator.GetService<CombatManager>().GetTeamOfAUnit(selectedUnit);
+
         if (previousSelectedTile == null || previousSelectedTile != selectedTile)
         {
             previousSelectedTile = selectedTile;
-            movementSystem.ShowPath(selectedTile.Coords, grid);
+            movementSystem.ShowPath(selectedTile.Coords, grid, team);
             return;
         }
 

@@ -68,10 +68,18 @@ public class GraphSearch
 
         grid.RemoveTemporaryNodes(tempNodes);
 
+        foreach (var node in tempNodes)
+        {
+            if (visitedNodes.ContainsKey(node))
+            {
+                visitedNodes.Remove(node);
+            }
+        }
+
         return new BFSResult { visitedNodesDict = visitedNodes };
     }
 
-    public BFSResult BFSGetRange(IGrid grid, Vector3Int startPoint, int movementPoints, NeighbourhoodType type)
+    public BFSResult BFSGetRange(IGrid grid, Vector3Int startPoint, int movementPoints, NeighbourhoodType type, TeamEnum team)
     {
         Dictionary<Vector3Int, Vector3Int?> visitedNodes = new Dictionary<Vector3Int, Vector3Int?>();
         Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
@@ -95,7 +103,7 @@ public class GraphSearch
                     continue;
                 }
 
-                int nodeCost = gridService.GetTileCost(neighbourPosition);
+                int nodeCost = gridService.GetTileCost(neighbourPosition, team);
                 int currentCost = costSoFar[currentNode];
                 int newCost = currentCost + nodeCost;
 
@@ -140,8 +148,9 @@ public class GraphSearch
 public class BFSResult
 {
     public Dictionary<Vector3Int, Vector3Int?> visitedNodesDict;
+    private TeamEnum team;
 
-    public (List<Vector3Int> path, int pathCost) GetPathTo(Vector3Int destination)
+    public (List<Vector3Int> path, int pathCost) GetPathTo(Vector3Int destination, TeamEnum team)
     {
         if (!visitedNodesDict.ContainsKey(destination))
         {
@@ -158,7 +167,7 @@ public class BFSResult
 
         foreach (var node in path)
         {
-            cost += gridService.GetTileCost(node);
+            cost += gridService.GetTileCost(node, team);
         }
 
         return (path, cost);

@@ -9,12 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebeeecedc77902e47b199374c0f550e7, type: 3}
-  m_Name: ApplyGeo
+  m_Script: {fileID: 11500000, guid: b3e4877d1a5ec2a498cbf5aa4733e2e9, type: 3}
+  m_Name: Increase Tile Movement Cost
   m_EditorClassIdentifier: 
-  actionInfo:
-    ActionDistance: 0
-    NeighbourhoodType: 5
-    ActionRangeAmount: 4
-  element: 1
-  spreadElementsOnTile: 0
+  changeMovementValueBy: 2

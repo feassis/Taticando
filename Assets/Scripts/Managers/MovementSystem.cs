@@ -23,9 +23,9 @@ public class MovementSystem
         movementRange = new BFSResult();
     }
 
-    public void ShowRange(UnitGraphics selectedUnit, IGrid grid)
+    public void ShowRange(UnitGraphics selectedUnit, IGrid grid, TeamEnum team)
     {
-        CalculateRange(selectedUnit, grid);
+        CalculateRange(selectedUnit, grid, team);
 
         Vector3Int unitPos = grid.GetClosestTile(selectedUnit.transform.position);
 
@@ -40,16 +40,16 @@ public class MovementSystem
         }
     }
 
-    private void CalculateRange(UnitGraphics selectedUnit, IGrid grid)
+    private void CalculateRange(UnitGraphics selectedUnit, IGrid grid, TeamEnum team)
     {
         currentPath.Clear();
         movementRange = new BFSResult();
         var graphSearchService = ServiceLocator.GetService<GraphSearch>();
         movementRange = graphSearchService.BFSGetRange(grid,
-            grid.GetClosestTile(selectedUnit.transform.position), selectedUnit.MovementPoints, NeighbourhoodType.Cross);
+            grid.GetClosestTile(selectedUnit.transform.position), selectedUnit.MovementPoints, NeighbourhoodType.Cross, team);
     }
 
-    public void ShowPath(Vector3Int selectedHexPosition, IGrid grid)
+    public void ShowPath(Vector3Int selectedHexPosition, IGrid grid, TeamEnum team)
     {
         if (movementRange.GetRangePositions().Contains(selectedHexPosition))
         {
@@ -58,7 +58,7 @@ public class MovementSystem
                 grid.GetTileAt(position).ResetHightlight();
             }
 
-            (var path, var cost) = movementRange.GetPathTo(selectedHexPosition);
+            (var path, var cost) = movementRange.GetPathTo(selectedHexPosition, team);
 
             currentPath = path;
             currentCost = cost;

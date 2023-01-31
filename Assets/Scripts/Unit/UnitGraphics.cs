@@ -15,6 +15,7 @@ namespace MVC.View.Unit
 
         [SerializeField] private UnitAction action;
         [SerializeField] private HealthBarGraphics hpBar;
+        [SerializeField] private ShieldHolderGraphics shieldHolder;
         [SerializeField] private UnitElementGraphics unitElemets;
 
         public int MovementPoints { get => ServiceLocator.GetService<CombatManager>().GetUnitMovementPoints(this); }
@@ -43,6 +44,7 @@ namespace MVC.View.Unit
             var combatManager = ServiceLocator.GetService<CombatManager>();
             combatManager.AddUnitToTeam(team, this);
             combatManager.SubscribeActionToUnitOnDamage(this, hpBar.UpdateHealthbar);
+            combatManager.SubscribeActionToUnitShieldChange(this, shieldHolder.DisplayShield);
 
             (int currentHp, int maxHP) hpStatus = combatManager.GetUnitHPStatus(this);
             hpBar.Setup(hpStatus.currentHp, hpStatus.maxHP);

@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebeeecedc77902e47b199374c0f550e7, type: 3}
-  m_Name: ApplyGeo
+  m_Script: {fileID: 11500000, guid: a4a3a2a3f43aae84b834f9d0767ba153, type: 3}
+  m_Name: Damage Unit
   m_EditorClassIdentifier: 
   actionInfo:
     ActionDistance: 0
-    NeighbourhoodType: 5
-    ActionRangeAmount: 4
-  element: 1
-  spreadElementsOnTile: 0
+    NeighbourhoodType: 0
+    ActionRangeAmount: 0
+  damage: 10

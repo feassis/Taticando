@@ -19,12 +19,15 @@ public class TileModel
         TileType.Default => 10,
         TileType.Difficult => 20,
         TileType.Road => 5,
-        _ => throw new Exception($"Hex Type {tileType} Not Supported"),
+        _ => throw new Exception($"Tile Type {tileType} Not Supported"),
     };
 
-    public int GetCost()
+    public int GetCost(TeamEnum team)
     {
-        return GetDefaultCost(type);
+        int currentCost = GetDefaultCost(type);
+
+        currentCost = ServiceLocator.GetService<ElementService>().GetTileMovementCostAfterElement(currentCost, elements.Elements, team);
+        return currentCost;
     }
 
     public bool IsTileAfflictedByElement(ElementsEnum element)

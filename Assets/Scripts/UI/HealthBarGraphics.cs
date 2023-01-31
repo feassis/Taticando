@@ -25,4 +25,9 @@ public class HealthBarGraphics : MonoBehaviour
     {
         healthbarSprite.fillAmount = Mathf.MoveTowards(healthbarSprite.fillAmount, targetFillAmount, reduceSpeed * Time.deltaTime);
     }
+
+    public void RequestDestruction()
+    {
+        Destroy(this);
+    }
 }

@@ -58,8 +58,9 @@ namespace MVC.Controler.Combat
         public void ExecuteActionOfSelectedUnit()
         {
             var unitManager = ServiceLocator.GetService<UnitManager>();
+            var selectedUnit = unitManager.GetSelectedUnitReference();
             unitManager.UseSelectedUnityAction();
-            var unitModel = GetUnitOfATeam(unitManager.GetSelectedUnitReference());
+            var unitModel = GetUnitOfATeam(selectedUnit);
             unitModel.SpentActionPoints(1);//this number will change after implementation o tool to create characters
             CheckTeamHasActionsToDo();
         }
@@ -134,11 +135,25 @@ namespace MVC.Controler.Combat
             unit.UnitData.OnDamageReceived += onDamage;
         }
 
-        public void DamageUnit(UnitGraphics desiredUnit, int dmg)
+        public void SubscribeActionToUnitShieldChange(UnitGraphics desiredUnit, Action<int> onShieldChange)
         {
             var unit = GetUnitInCombat(desiredUnit);
 
-            unit.UnitData.ApplyDamage(dmg);
+            unit.UnitData.OnShieldChanged += onShieldChange;
+        }
+
+        public void GiveShield(UnitGraphics desiredUnit, int amount)
+        {
+            var unit = GetUnitInCombat(desiredUnit);
+
+            unit.GainShield(amount);
+        }
+
+        public int DamageUnit(UnitGraphics desiredUnit, int dmg)
+        {
+            var unit = GetUnitInCombat(desiredUnit);
+
+            return unit.ApplyDamage(dmg);
         }
 
         public (int currentHp, int maxHP) GetUnitHPStatus(UnitGraphics desiredUnit)
@@ -225,69 +240,6 @@ namespace MVC.Controler.Combat
             }
 
             return null;
-        }
-    }
-
-    public class Team
-    {
-        public TeamEnum MyTeam;
-        public List<UnitInCombat> UnitsInCombat = new List<UnitInCombat>();
-
-        public bool HasActionsToDo()
-        {
-            foreach (var unit in UnitsInCombat)
-            {
-                if (unit.UnitData.HasActionsToDo())
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool IsUnitOnTeam(UnitGraphics unit)
-        {
-            foreach (var unitInCombat in UnitsInCombat)
-            {
-                if (unitInCombat.UnitOnScene.Equals(unit))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-    }
-
-    public class UnitInCombat
-    {
-        public UnitGraphics UnitOnScene;
-        public UnitModel UnitData;
-
-        public int GetEstimatedDamage(int dmg)
-        {
-            return dmg; //change it after implementing shild system
-        }
-
-        public int ApplyDamage(int dmg)
-        {
-            return UnitData.ApplyDamage(dmg);
-        }
-
-        public UnitInCombat(UnitGraphics unitGraphicsObject, TeamEnum team)
-        {
-            UnitOnScene = unitGraphicsObject;
-            UnitData = new UnitModel(team);
-        }
-
-        public void ApplyElement(ElementsEnum element)
-        {
-            UnitData.ApplyElement(element, 1);
-
-            //call element effects here
-
-            UnitOnScene.UpdateElementVisibility(UnitData.GetElementsOnUnit());
         }
     }
 }

@@ -44,9 +44,9 @@ public class GridService
         return tileDict[position].IsTileAfflictedByElement(element);
     }
 
-    public int GetTileCost(Vector3Int position)
+    public int GetTileCost(Vector3Int position, TeamEnum team)
     {
-        return tileDict[position].GetCost();
+        return tileDict[position].GetCost(team);
     }
 
     public bool IsTileAnObstacle(Vector3Int position)

@@ -7,9 +7,11 @@ public class UnitModel
     [SerializeField] private int movementPoints = 20;
     [SerializeField] private int actionPoints = 1;
 
-    private int currentMovementpoints = 20; //when spawn is made remoce this value initialization
-    private int currentActionpoints = 1; //when spawn is made remoce this value initialization
+    private int currentMovementpoints = 20;
+    private int currentActionpoints = 1; 
     private int currentHP = 10;
+
+    private int shield;
 
     private int attackPower = 1;
 
@@ -19,6 +21,7 @@ public class UnitModel
     public int GetAttackPowuer() => attackPower;
     public TeamEnum GetTeam() => team;
     public Action<int, int> OnDamageReceived;
+    public Action<int> OnShieldChanged;
 
     public UnitModel(TeamEnum team)
     {
@@ -47,6 +50,12 @@ public class UnitModel
         return actionPoints > 0;
     }
 
+    public void GainShield(int amount)
+    {
+        shield += amount;
+        OnShieldChanged?.Invoke(shield);
+    }
+
     public int GetCurrentMovementPoints()
     {
         return currentMovementpoints;
@@ -64,6 +73,19 @@ public class UnitModel
 
     public int GetMaxHp() => maxHp;
     public int GetCurrentHP() => currentHP;
+
+    public (int damageToShield, int remainingDamage) DamageShield(int dmg)
+    {
+        int damageToShield = Mathf.Clamp(dmg, 0, shield);
+
+        shield -= damageToShield;
+
+        int remainingDamage = dmg - damageToShield > 0 ? dmg - damageToShield : 0;
+
+        OnShieldChanged?.Invoke(shield);
+
+        return (damageToShield, remainingDamage);
+    }
 
     public int ApplyDamage(int dmg)
     {

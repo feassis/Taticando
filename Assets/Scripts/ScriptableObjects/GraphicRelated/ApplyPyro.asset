@@ -12,4 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebeeecedc77902e47b199374c0f550e7, type: 3}
   m_Name: ApplyPyro
   m_EditorClassIdentifier: 
+  actionInfo:
+    ActionDistance: 3
+    NeighbourhoodType: 5
+    ActionRangeAmount: 2
   element: 2
+  spreadElementsOnTile: 0
