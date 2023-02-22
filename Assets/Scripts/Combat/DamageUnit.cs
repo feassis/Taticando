@@ -1,19 +1,25 @@
-using MVC.Controler.Combat;
+using MVC.Controller.Combat;
+using MVC.Model.Combat;
 using MVC.View.Unit;
-using System.Collections;
-using System.Collections.Generic;
 using Tools;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Damage Unit", menuName = "Units/Action/Damage Unit")]
-public class DamageUnit : UnitAction
+namespace MVC.Controller.Unit
 {
-    [SerializeField] private int damage;
-
-    public override int Execute(UnitGraphics unit)
+    [CreateAssetMenu(fileName = "Damage Unit", menuName = "Units/Action/Damage Unit")]
+    public class DamageUnit : UnitAction
     {
-        var combatManager = ServiceLocator.GetService<CombatManager>();
+        [SerializeField] private DamageType type;
 
-        return combatManager.DamageUnit(unit, damage);
+        public override int Execute(UnitGraphics unit)
+        {
+            var combatManager = ServiceLocator.GetService<CombatManager>();
+
+            float modifier = combatManager.GetUnitOfATeam(unit).GetActionModifier(actionType);
+
+            return combatManager.DamageUnit(unit, Mathf.RoundToInt(modifier), type);
+        }
     }
 }
+
+

@@ -1,121 +1,130 @@
-using MVC.Controler.Combat;
+using MVC.Controller.Combat;
+using MVC.Model.Combat;
+using MVC.Model.Unit;
 using MVC.View.Unit;
 using System.Collections;
 using System.Collections.Generic;
 using Tools;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Attack Player", menuName = "Units/Action/Enemy/Attack Player")]
-public class AttackPlayer : EnemyBasicAction
+namespace MVC.Controller.Unit
 {
-    [SerializeField]
-    private AttackType attackType;
-
-    public override int Execute(UnitGraphics unit)
+    [CreateAssetMenu(fileName = "Attack Player", menuName = "Units/Action/Enemy/Attack Player")]
+    public class AttackPlayer : EnemyBasicAction
     {
-        List<UnitInCombat> possibleTargets = GetPossibleTargets(unit);
+        [SerializeField]
+        private AttackType attackType;
+        [SerializeField]
+        private DamageType damageType;
 
-        var combatManager = ServiceLocator.GetService<CombatManager>();
-
-        UnitModel unitInCombat = combatManager.GetUnitOfATeam(unit);
-
-        int attackPower = unitInCombat.GetAttackPowuer();
-
-        return Attack(attackPower, possibleTargets);
-    }
-
-    private int Attack(int dmg, List<UnitInCombat> possibleTargets)
-    {
-        return attackType switch
+        public override int Execute(UnitGraphics unit)
         {
-            AttackType.AttackAllTargets => AttackAllTargets(dmg, possibleTargets),
-            AttackType.AttackTargetWithLowerHP => AttackTargetWithLowerHP(dmg, possibleTargets),
-            AttackType.AttackTargetToCauseMostDamage => AttackTargetThatSufferMoreDamage(dmg, possibleTargets),
-            _ => throw new System.NotImplementedException()
-        };
-    }
+            List<UnitInCombat> possibleTargets = GetPossibleTargets(unit);
 
-    private int AttackTargetThatSufferMoreDamage(int dmg, List<UnitInCombat> possibleTargets)
-    {
-        UnitInCombat targetUnit = null;
+            var combatManager = ServiceLocator.GetService<CombatManager>();
 
-        foreach (var target in possibleTargets)
-        {
-            if (target.UnitData.GetTeam() != TeamEnum.Player)
-            {
-                continue;
-            }
+            UnitModel unitInCombat = combatManager.GetUnitOfATeam(unit).UnitData;
 
-            if (targetUnit == null)
-            {
-                targetUnit = target;
-                continue;
-            }
+            float attackPower = unitInCombat.GetActionModifier(actionType);
 
-            if (targetUnit.GetEstimatedDamage(dmg) < targetUnit.GetEstimatedDamage(dmg))
-            {
-                targetUnit = target;
-            }
+            return Attack(Mathf.RoundToInt(attackPower), possibleTargets);
         }
 
-        if (targetUnit != null)
+        private int Attack(int dmg, List<UnitInCombat> possibleTargets)
         {
-            return targetUnit.ApplyDamage(dmg);
+            return attackType switch
+            {
+                AttackType.AttackAllTargets => AttackAllTargets(dmg, possibleTargets),
+                AttackType.AttackTargetWithLowerHP => AttackTargetWithLowerHP(dmg, possibleTargets),
+                AttackType.AttackTargetToCauseMostDamage => AttackTargetThatSufferMoreDamage(dmg, possibleTargets),
+                _ => throw new System.NotImplementedException()
+            };
         }
 
-        return 0;
-    }
-
-    private int AttackTargetWithLowerHP(int dmg, List<UnitInCombat> possibleTargets)
-    {
-        UnitInCombat targetUnit = null;
-
-        foreach (var target in possibleTargets)
+        private int AttackTargetThatSufferMoreDamage(int dmg, List<UnitInCombat> possibleTargets)
         {
-            if (target.UnitData.GetTeam() != TeamEnum.Player)
+            UnitInCombat targetUnit = null;
+
+            foreach (var target in possibleTargets)
             {
-                continue;
+                if (target.UnitData.GetTeam() != TeamEnum.Player)
+                {
+                    continue;
+                }
+
+                if (targetUnit == null)
+                {
+                    targetUnit = target;
+                    continue;
+                }
+
+                if (targetUnit.GetEstimatedDamage(dmg) < targetUnit.GetEstimatedDamage(dmg))
+                {
+                    targetUnit = target;
+                }
             }
 
-            if (targetUnit == null)
+            if (targetUnit != null)
             {
-                targetUnit = target;
-                continue;
+                return targetUnit.ApplyDamage(dmg, damageType);
             }
 
-            if(targetUnit.UnitData.GetCurrentHP() > targetUnit.UnitData.GetCurrentHP())
-            {
-                targetUnit = target;
-            }
+            return 0;
         }
 
-        if (targetUnit != null)
+        private int AttackTargetWithLowerHP(int dmg, List<UnitInCombat> possibleTargets)
         {
-            return targetUnit.ApplyDamage(dmg);
-        }
+            UnitInCombat targetUnit = null;
 
-        return 0;
-    }
-
-    private int AttackAllTargets(int dmg, List<UnitInCombat> possibleTargets)
-    {
-        int totalDamageDelt = 0;
-
-        foreach (var target in possibleTargets)
-        {
-            if(target.UnitData.GetTeam() == TeamEnum.Player)
+            foreach (var target in possibleTargets)
             {
-                totalDamageDelt += target.ApplyDamage(dmg);
+                if (target.UnitData.GetTeam() != TeamEnum.Player)
+                {
+                    continue;
+                }
+
+                if (targetUnit == null)
+                {
+                    targetUnit = target;
+                    continue;
+                }
+
+                if (targetUnit.UnitData.GetCurrentHP() > targetUnit.UnitData.GetCurrentHP())
+                {
+                    targetUnit = target;
+                }
             }
+
+            if (targetUnit != null)
+            {
+                return targetUnit.ApplyDamage(dmg, damageType);
+            }
+
+            return 0;
         }
 
-        return totalDamageDelt;
+        private int AttackAllTargets(int dmg, List<UnitInCombat> possibleTargets)
+        {
+            int totalDamageDelt = 0;
+
+            foreach (var target in possibleTargets)
+            {
+                if (target.UnitData.GetTeam() == TeamEnum.Player)
+                {
+                    totalDamageDelt += target.ApplyDamage(dmg, damageType);
+                }
+            }
+
+            return totalDamageDelt;
+        }
+
+        private enum AttackType
+        {
+            AttackAllTargets = 0,
+            AttackTargetWithLowerHP = 1,
+            AttackTargetToCauseMostDamage = 2,
+        }
     }
 
-    private enum AttackType
-    {
-        AttackAllTargets = 0,
-        AttackTargetWithLowerHP = 1,
-        AttackTargetToCauseMostDamage = 2,
-    }
 }
+

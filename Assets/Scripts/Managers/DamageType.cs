@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum DamageType
+namespace MVC.Model.Combat
 {
-    BasicDamage = 0,
-    FireDamage = 1,
-    GeoDamage = 2
+    public enum DamageType
+    {
+        BasicDamage = 0,
+        FireDamage = 1,
+        GeoDamage = 2,
+        EletricDamage = 3
+    }
 }
+

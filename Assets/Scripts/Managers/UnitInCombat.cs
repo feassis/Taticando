@@ -1,12 +1,26 @@
-﻿using MVC.View.Unit;
+﻿using MVC.Controller.Elements;
+using MVC.Model.Combat;
+using MVC.Model.Elements;
+using MVC.Model.Unit;
+using MVC.View.Unit;
 using Tools;
 
-namespace MVC.Controler.Combat
+namespace MVC.Controller.Combat
 {
     public class UnitInCombat
     {
         public UnitGraphics UnitOnScene;
         public UnitModel UnitData;
+
+        public int GetUnitShiled()
+        {
+            return UnitData.GetCurrentShield();
+        }
+
+        public float GetActionModifier(ActionType type)
+        {
+            return UnitData.GetActionModifier(type);
+        }
 
         public int GetEstimatedDamage(int dmg)
         {
@@ -18,9 +32,18 @@ namespace MVC.Controler.Combat
             UnitData.GainShield(amount);
         }
 
-        public int ApplyDamage(int dmg)
+        public int ApplyDamage(int dmg, DamageType type)
         {
-            return UnitData.ApplyDamage(dmg);
+            var elementService = ServiceLocator.GetService<ElementService>();
+
+            var modifiedDamage = elementService.GetDamageModifiedByElement(UnitOnScene, dmg, type);
+
+            return UnitData.ApplyDamage(modifiedDamage);
+        }
+
+        public int Heal(int amount)
+        {
+            return UnitData.Heal(amount);
         }
 
         public UnitInCombat(UnitGraphics unitGraphicsObject, TeamEnum team)
@@ -37,5 +60,7 @@ namespace MVC.Controler.Combat
 
             UnitOnScene.UpdateElementVisibility(UnitData.GetElementsOnUnit());
         }
+
+        public ElementsEnum GetElementsAfflictingUnit() => UnitData.GetElementsOnUnit();
     }
 }

@@ -1,19 +1,24 @@
-﻿using MVC.Controler.Combat;
+﻿using MVC.Controller.Combat;
 using MVC.View.Unit;
 using Tools;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Gain Shield", menuName = "Units/Action/Gain Shied")]
-public class GainShield : UnitAction
+namespace MVC.Controller.Unit
 {
-    [SerializeField] private int amountToGain;
-
-    public override int Execute(UnitGraphics unit)
+    [CreateAssetMenu(fileName = "Gain Shield", menuName = "Units/Action/Gain Shied")]
+    public class GainShield : UnitAction
     {
-        var combatManager = ServiceLocator.GetService<CombatManager>();
+        public override int Execute(UnitGraphics unit)
+        {
+            var combatManager = ServiceLocator.GetService<CombatManager>();
 
-        combatManager.GiveShield(unit, amountToGain);
+            float amountToGain= combatManager.GetUnitOfATeam(unit).GetActionModifier(actionType);
 
-        return 0;
+            combatManager.GiveShield(unit, Mathf.RoundToInt(amountToGain));
+
+            return 0;
+        }
     }
 }
+
+

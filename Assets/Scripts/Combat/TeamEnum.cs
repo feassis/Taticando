@@ -1,6 +1,10 @@
-public enum TeamEnum
+namespace MVC.Model.Combat
 {
-    None = -1,
-    Player = 0,
-    Enemy = 1
+    public enum TeamEnum
+    {
+        None = -1,
+        Player = 0,
+        Enemy = 1
+    }
 }
+

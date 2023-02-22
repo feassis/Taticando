@@ -1,18 +1,22 @@
-using System.Collections;
+using MVC.Model.Elements;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitElementGraphics : MonoBehaviour
+namespace MVC.View.Elements
 {
-    [SerializeField] private Transform elementsHolder;
-    [SerializeField] private List<ElementGraphicIsntance> elements;
-
-    public void UpdateElementsVisibility(ElementsEnum elementsActive)
+    public class UnitElementGraphics : MonoBehaviour
     {
-        foreach (var element in elements)
+        [SerializeField] private Transform elementsHolder;
+        [SerializeField] private List<ElementGraphicIsntance> elements;
+
+        public void UpdateElementsVisibility(ElementsEnum elementsActive)
         {
-            element.elementGraphics.SetActive(elementsActive.HasFlag(element.element));
+            foreach (var element in elements)
+            {
+                element.elementGraphics.SetActive(elementsActive.HasFlag(element.element));
+            }
         }
     }
-
 }
+
+

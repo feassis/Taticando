@@ -1,7 +1,8 @@
-﻿using MVC.View.Unit;
+﻿using MVC.Model.Combat;
+using MVC.View.Unit;
 using System.Collections.Generic;
 
-namespace MVC.Controler.Combat
+namespace MVC.Controller.Combat
 {
     public class Team
     {

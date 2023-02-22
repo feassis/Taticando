@@ -1,4 +1,13 @@
-using MVC.Controler.Combat;
+using MVC.Controller.Combat;
+using MVC.Controller.Graph;
+using MVC.Controller.Movement;
+using MVC.Controller.Unit;
+using MVC.Model.Combat;
+using MVC.Model.Elements;
+using MVC.View.Elements;
+using MVC.View.Grid;
+using MVC.View.UI;
+using MVC.View.VFX;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +22,7 @@ namespace MVC.View.Unit
         [SerializeField] private TeamEnum team;
         [SerializeField] private GridCoordinates coords;
 
-        [SerializeField] private UnitAction action;
+        [SerializeField] private UnitAction action;//remove this afte5r unit indtsntistion is done
         [SerializeField] private HealthBarGraphics hpBar;
         [SerializeField] private ShieldHolderGraphics shieldHolder;
         [SerializeField] private UnitElementGraphics unitElemets;
@@ -44,6 +53,7 @@ namespace MVC.View.Unit
             var combatManager = ServiceLocator.GetService<CombatManager>();
             combatManager.AddUnitToTeam(team, this);
             combatManager.SubscribeActionToUnitOnDamage(this, hpBar.UpdateHealthbar);
+            combatManager.SubscribeActionToUnitOnHeal(this, hpBar.UpdateHealthbar);
             combatManager.SubscribeActionToUnitShieldChange(this, shieldHolder.DisplayShield);
 
             (int currentHp, int maxHP) hpStatus = combatManager.GetUnitHPStatus(this);

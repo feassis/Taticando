@@ -1,24 +1,20 @@
-﻿using MVC.View.Unit;
-using System;
+﻿using MVC.Model.Unit;
+using MVC.View.Unit;
 using UnityEngine;
 
-
-public abstract class UnitAction : ScriptableObject
+namespace MVC.Controller.Unit
 {
-    [SerializeField] private ActionRangeInfo actionInfo;
-    public abstract int Execute(UnitGraphics unit);
-
-    public ActionRangeInfo GetRangeInfo()
+    public abstract class UnitAction : ScriptableObject
     {
-        return actionInfo;
+        [SerializeField] protected ActionRangeInfo actionInfo;
+        [SerializeField] protected ActionType actionType;
+        public abstract int Execute(UnitGraphics unit);
+
+        public ActionRangeInfo GetRangeInfo()
+        {
+            return actionInfo;
+        }
     }
 }
 
-[Serializable]
-public struct ActionRangeInfo
-{
-    public int ActionDistance;
-    public NeighbourhoodType NeighbourhoodType;
-    public int ActionRangeAmount;
-}
 

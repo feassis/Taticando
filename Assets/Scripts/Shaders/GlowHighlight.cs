@@ -1,120 +1,123 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GlowHighlight : MonoBehaviour
+namespace MVC.View.VFX
 {
-    Dictionary<Renderer, Material[]> glowMaterialDictionary = new Dictionary<Renderer, Material[]>();
-    Dictionary<Renderer, Material[]> originalMaterialDictionary = new Dictionary<Renderer, Material[]>();
-
-    Dictionary<Color, Material> cachedGlowMaterials = new Dictionary<Color, Material>();
-
-    [SerializeField] private Material glowMaterial;
-
-    [SerializeField] private bool isGlowing = false;
-
-    private Color validSpaceColor = Color.green;
-    private Color originalGlowColor;
-
-    private const string glowReference = "_GlowColor";
-
-    private void Awake()
+    public class GlowHighlight : MonoBehaviour
     {
-        PrepareMaterialDictionaries();
-        originalGlowColor = glowMaterial.GetColor(glowReference);
-    }
+        Dictionary<Renderer, Material[]> glowMaterialDictionary = new Dictionary<Renderer, Material[]>();
+        Dictionary<Renderer, Material[]> originalMaterialDictionary = new Dictionary<Renderer, Material[]>();
 
-    private void PrepareMaterialDictionaries()
-    {
-        foreach (Renderer renderer in GetComponentsInChildren<Renderer>())
+        Dictionary<Color, Material> cachedGlowMaterials = new Dictionary<Color, Material>();
+
+        [SerializeField] private Material glowMaterial;
+
+        [SerializeField] private bool isGlowing = false;
+
+        private Color validSpaceColor = Color.green;
+        private Color originalGlowColor;
+
+        private const string glowReference = "_GlowColor";
+
+        private void Awake()
         {
-            Material[] originalMaterials = renderer.materials;
-            originalMaterialDictionary.Add(renderer, originalMaterials);
-            Material[] newMaterials = new Material[renderer.materials.Length];
+            PrepareMaterialDictionaries();
+            originalGlowColor = glowMaterial.GetColor(glowReference);
+        }
 
-            for (int i = 0; i < originalMaterials.Length; i++)
+        private void PrepareMaterialDictionaries()
+        {
+            foreach (Renderer renderer in GetComponentsInChildren<Renderer>())
             {
-                Material mat = null;
+                Material[] originalMaterials = renderer.materials;
+                originalMaterialDictionary.Add(renderer, originalMaterials);
+                Material[] newMaterials = new Material[renderer.materials.Length];
 
-                if (cachedGlowMaterials.TryGetValue(originalMaterials[i].color, out mat) == false)
+                for (int i = 0; i < originalMaterials.Length; i++)
                 {
-                    mat = new Material(glowMaterial);
-                    mat.color = originalMaterials[i].color;
+                    Material mat = null;
+
+                    if (cachedGlowMaterials.TryGetValue(originalMaterials[i].color, out mat) == false)
+                    {
+                        mat = new Material(glowMaterial);
+                        mat.color = originalMaterials[i].color;
+                    }
+
+                    newMaterials[i] = mat;
                 }
 
-                newMaterials[i] = mat;
+                glowMaterialDictionary.Add(renderer, newMaterials);
+            }
+        }
+
+        internal void HighlightValidPath()
+        {
+            if (isGlowing == false)
+            {
+                return;
             }
 
-            glowMaterialDictionary.Add(renderer, newMaterials);
-        }
-    }
-
-    internal void HighlightValidPath()
-    {
-        if (isGlowing == false)
-        {
-            return;
-        }
-
-        foreach (Renderer renderer in glowMaterialDictionary.Keys)
-        {
-            foreach (var item in glowMaterialDictionary[renderer])
+            foreach (Renderer renderer in glowMaterialDictionary.Keys)
             {
-                item.SetColor(glowReference, validSpaceColor);
-            }
+                foreach (var item in glowMaterialDictionary[renderer])
+                {
+                    item.SetColor(glowReference, validSpaceColor);
+                }
 
-            renderer.materials = glowMaterialDictionary[renderer];
-        }
-    }
-
-    internal void ResetGlowHighlight(bool forceReset = false)
-    {
-        if (isGlowing == false && !forceReset)
-        {
-            return;
-        }
-
-        foreach (Renderer renderer in glowMaterialDictionary.Keys)
-        {
-            foreach (var item in glowMaterialDictionary[renderer])
-            {
-                item.SetColor(glowReference, originalGlowColor);
-            }
-
-            renderer.materials = glowMaterialDictionary[renderer];
-        }
-    }
-
-    public void ToggleGlow()
-    {
-        if (isGlowing == false)
-        {
-            ResetGlowHighlight(true);
-            foreach (Renderer renderer in originalMaterialDictionary.Keys)
-            {
                 renderer.materials = glowMaterialDictionary[renderer];
             }
         }
-        else
+
+        internal void ResetGlowHighlight(bool forceReset = false)
         {
-            foreach (Renderer renderer in originalMaterialDictionary.Keys)
+            if (isGlowing == false && !forceReset)
             {
-                renderer.materials = originalMaterialDictionary[renderer];
+                return;
+            }
+
+            foreach (Renderer renderer in glowMaterialDictionary.Keys)
+            {
+                foreach (var item in glowMaterialDictionary[renderer])
+                {
+                    item.SetColor(glowReference, originalGlowColor);
+                }
+
+                renderer.materials = glowMaterialDictionary[renderer];
             }
         }
 
-        isGlowing = !isGlowing;
-    }
-
-    public void ToggleGlow(bool state)
-    {
-        if (isGlowing == state)
+        public void ToggleGlow()
         {
-            return;
+            if (isGlowing == false)
+            {
+                ResetGlowHighlight(true);
+                foreach (Renderer renderer in originalMaterialDictionary.Keys)
+                {
+                    renderer.materials = glowMaterialDictionary[renderer];
+                }
+            }
+            else
+            {
+                foreach (Renderer renderer in originalMaterialDictionary.Keys)
+                {
+                    renderer.materials = originalMaterialDictionary[renderer];
+                }
+            }
+
+            isGlowing = !isGlowing;
         }
 
-        isGlowing = !state;
-        ToggleGlow();
+        public void ToggleGlow(bool state)
+        {
+            if (isGlowing == state)
+            {
+                return;
+            }
+
+            isGlowing = !state;
+            ToggleGlow();
+        }
     }
+
 }
+

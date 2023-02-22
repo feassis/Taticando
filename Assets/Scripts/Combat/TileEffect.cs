@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 
-public abstract class TileEffect : ScriptableObject
+namespace MVC.Controller.Tile
 {
-    public abstract int GetTileCost(int currentCost);
-} 
+    public abstract class TileEffect : ScriptableObject
+    {
+        public abstract int GetTileCost(int currentCost);
+    }
+}
+

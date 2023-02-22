@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MVC.Controller.Tile;
+using MVC.Model.Combat;
+using System;
 using System.Collections.Generic;
 
 [Serializable]

@@ -2,40 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShieldHolderGraphics : MonoBehaviour
+namespace MVC.View.UI
 {
-    [SerializeField] private HealthBarGraphics shieldPrefab;
-    [SerializeField] private int shieldMaxHP;
-    [SerializeField] private Transform shieldHolder;
-
-    private List<HealthBarGraphics> liveShields = new List<HealthBarGraphics>();
-
-    public void DisplayShield(int shieldAmount)
+    public class ShieldHolderGraphics : MonoBehaviour
     {
-        foreach (var shield in liveShields)
+        [SerializeField] private HealthBarGraphics shieldPrefab;
+        [SerializeField] private int shieldMaxHP;
+        [SerializeField] private Transform shieldHolder;
+
+        private List<HealthBarGraphics> liveShields = new List<HealthBarGraphics>();
+
+        public void DisplayShield(int shieldAmount)
         {
-            shield.RequestDestruction();
+            foreach (var shield in liveShields)
+            {
+                shield.RequestDestruction();
+            }
+
+            liveShields.Clear();
+
+            int shieldAmountToDisplay = shieldAmount;
+
+            while (shieldAmountToDisplay > 0)
+            {
+                var shield = Instantiate(shieldPrefab, shieldHolder);
+                if (shieldAmountToDisplay > shieldMaxHP)
+                {
+                    shield.Setup(shieldMaxHP, shieldMaxHP);
+
+                    shieldAmountToDisplay -= shieldMaxHP;
+                }
+                else
+                {
+                    shield.Setup(shieldAmountToDisplay, shieldMaxHP);
+                    shieldAmountToDisplay = 0;
+                }
+
+                liveShields.Add(shield);
+            }
         }
 
-        liveShields.Clear();
-
-        int shieldAmountToDisplay = shieldAmount;
-
-        while(shieldAmountToDisplay > 0)
-        {
-            var shield = Instantiate(shieldPrefab, shieldHolder);
-            if (shieldAmountToDisplay > shieldMaxHP)
-            {
-                shield.Setup(shieldMaxHP, shieldMaxHP);
-
-                shieldAmountToDisplay -= shieldMaxHP;
-            }
-            else
-            {
-                shield.Setup(shieldAmountToDisplay, shieldMaxHP);
-                shieldAmountToDisplay = 0;
-            }
-        }
     }
-
 }
+
+

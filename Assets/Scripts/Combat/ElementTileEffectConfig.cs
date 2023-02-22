@@ -1,31 +1,36 @@
+using MVC.Model.Combat;
+using MVC.Model.Elements;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Element Tile Effects Config", menuName = "Configs/Elements/Effects On Tile Config")]
-public class ElementTileEffectConfig : ScriptableObject
+namespace MVC.Controller.Elements
 {
-    [SerializeField] List<ElementOnTileEffect> ElementsTileEffects;
-
-    public int GetTileMovementCostAffectedByElement(int defaultCost, ElementsEnum element, TeamEnum team)
+    [CreateAssetMenu(fileName = "Element Tile Effects Config", menuName = "Configs/Elements/Effects On Tile Config")]
+    public class ElementTileEffectConfig : ScriptableObject
     {
-        int currentCost = defaultCost;
-        foreach (var elementOption in (ElementsEnum[])Enum.GetValues(typeof(ElementsEnum)))
+        [SerializeField] List<ElementOnTileEffect> ElementsTileEffects;
+
+        public int GetTileMovementCostAffectedByElement(int defaultCost, ElementsEnum element, TeamEnum team)
         {
-            var elementEffect = ElementsTileEffects.Find(e => e.Element == elementOption);
-
-            if(elementEffect == null)
+            int currentCost = defaultCost;
+            foreach (var elementOption in (ElementsEnum[])Enum.GetValues(typeof(ElementsEnum)))
             {
-                continue;
+                var elementEffect = ElementsTileEffects.Find(e => e.Element == elementOption);
+
+                if (elementEffect == null)
+                {
+                    continue;
+                }
+
+                if (element.HasFlag(elementEffect.Element))
+                {
+                    currentCost = elementEffect.GetTileCostAfterEffect(currentCost, team);
+                }
             }
 
-            if (element.HasFlag(elementEffect.Element))
-            {
-                currentCost = elementEffect.GetTileCostAfterEffect(currentCost, team);
-            }
+            return currentCost;
         }
-
-        return currentCost;
     }
 }
+

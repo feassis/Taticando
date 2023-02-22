@@ -1,19 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
+using MVC.View.CameraControl;
 using Tools;
 using UnityEngine;
 
-public class Billboard : MonoBehaviour
+namespace MVC.View.UI
 {
-    private Transform cam;
-
-    private void Start()
+    public class Billboard : MonoBehaviour
     {
-        cam = ServiceLocator.GetService<CameraService>().GetMainCameraRigTransform();
-    }
+        private Transform cam;
 
-    void LateUpdate()
-    {
-        transform.LookAt(transform.position + cam.forward);
+        private void Start()
+        {
+            cam = ServiceLocator.GetService<CameraService>().GetMainCameraRigTransform();
+        }
+
+        void LateUpdate()
+        {
+            transform.LookAt(transform.position + cam.forward);
+        }
     }
 }
+
+

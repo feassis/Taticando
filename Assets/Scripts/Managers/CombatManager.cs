@@ -1,3 +1,7 @@
+using MVC.Controller.Unit;
+using MVC.Model.Combat;
+using MVC.Model.Elements;
+using MVC.Model.Unit;
 using MVC.View.Unit;
 using System;
 using System.Collections.Generic;
@@ -5,7 +9,7 @@ using System.Linq;
 using Tools;
 using UnityEngine;
 
-namespace MVC.Controler.Combat
+namespace MVC.Controller.Combat
 {
     public class CombatManager
     {
@@ -52,7 +56,7 @@ namespace MVC.Controler.Combat
         public void SpendMovementPointsOfAUnit(UnitGraphics unitObject, int cost)
         {
             var unitModel = GetUnitOfATeam(unitObject);
-            unitModel.SpentMovementPoints(cost);
+            unitModel.UnitData.SpentMovementPoints(cost);
         }
 
         public void ExecuteActionOfSelectedUnit()
@@ -61,7 +65,7 @@ namespace MVC.Controler.Combat
             var selectedUnit = unitManager.GetSelectedUnitReference();
             unitManager.UseSelectedUnityAction();
             var unitModel = GetUnitOfATeam(selectedUnit);
-            unitModel.SpentActionPoints(1);//this number will change after implementation o tool to create characters
+            unitModel.UnitData.SpentActionPoints(1);//this number will change after implementation o tool to create characters
             CheckTeamHasActionsToDo();
         }
 
@@ -74,7 +78,7 @@ namespace MVC.Controler.Combat
 
         public int GetUnitMovementPoints(UnitGraphics desiredUnit)
         {
-            UnitModel unit = GetUnitOfATeam(desiredUnit);
+            UnitModel unit = GetUnitOfATeam(desiredUnit).UnitData;
 
             if (unit == null)
             {
@@ -135,6 +139,13 @@ namespace MVC.Controler.Combat
             unit.UnitData.OnDamageReceived += onDamage;
         }
 
+        public void SubscribeActionToUnitOnHeal(UnitGraphics desiredUnit, Action<int, int> onHeal)
+        {
+            var unit = GetUnitInCombat(desiredUnit);
+
+            unit.UnitData.OnHealReceived+= onHeal;
+        }
+
         public void SubscribeActionToUnitShieldChange(UnitGraphics desiredUnit, Action<int> onShieldChange)
         {
             var unit = GetUnitInCombat(desiredUnit);
@@ -149,11 +160,18 @@ namespace MVC.Controler.Combat
             unit.GainShield(amount);
         }
 
-        public int DamageUnit(UnitGraphics desiredUnit, int dmg)
+        public int DamageUnit(UnitGraphics desiredUnit, int dmg, DamageType dmgType)
         {
             var unit = GetUnitInCombat(desiredUnit);
 
-            return unit.ApplyDamage(dmg);
+            return unit.ApplyDamage(dmg, dmgType);
+        }
+
+        public int HealUnit(UnitGraphics desiredUnit, int amount)
+        {
+            var unit = GetUnitInCombat(desiredUnit);
+
+            return unit.Heal(amount);
         }
 
         public (int currentHp, int maxHP) GetUnitHPStatus(UnitGraphics desiredUnit)
@@ -226,15 +244,15 @@ namespace MVC.Controler.Combat
             return units;
         }
 
-        public UnitModel GetUnitOfATeam(UnitGraphics desiredUnit)
+        public UnitInCombat GetUnitOfATeam(UnitGraphics desiredUnit)
         {
             foreach (var team in InCombatTeams)
             {
-                foreach (var unit in team.UnitsInCombat)
+                foreach (UnitInCombat unit in team.UnitsInCombat)
                 {
                     if (unit.UnitOnScene.Equals(desiredUnit))
                     {
-                        return unit.UnitData;
+                        return unit;
                     }
                 }
             }

@@ -1,49 +1,52 @@
-using MVC.Controler.Combat;
-using System.Collections;
-using System.Collections.Generic;
+using MVC.Controller.Combat;
+using MVC.Controller.Graph;
+using MVC.Controller.Grid;
+using MVC.Controller.Movement;
+using MVC.Controller.Unit;
 using Tools;
 using UnityEngine;
 
-public class GameInitialisation : MonoBehaviour
+
+namespace MVC.Controller.Inicialization
 {
-    private void Awake()
+    public class GameInitialisation : MonoBehaviour
     {
-        InitializeGridService();
-        InitializingGraphSearch();
-        InitializingMovementSystem();
-        CombatManagerInitialization();
+        private void Awake()
+        {
+            InitializeGridService();
+            InitializingGraphSearch();
+            InitializingMovementSystem();
+            SceneManagerInitialization();
+
+            ServiceLocator.GetService<SceneService>().OpenTestScene();
+        }
+
+        private void InitializeGridService()
+        {
+            var gridService = new GridService();
+            gridService.Setup();
+
+            ServiceLocator.RegisterService<GridService>(gridService);
+        }
+
+        private void InitializingGraphSearch()
+        {
+            var graphSearch = new GraphSearch();
+            ServiceLocator.RegisterService<GraphSearch>(graphSearch);
+        }
+
+        private void InitializingMovementSystem()
+        {
+            var movementSystem = new MovementSystem();
+            ServiceLocator.RegisterService<MovementSystem>(movementSystem);
+        }
+
+        private void SceneManagerInitialization()
+        {
+            var sceneService = new SceneService();
+
+            ServiceLocator.RegisterService<SceneService>(sceneService);
+        }
     }
 
-    private void InitializeGridService()
-    {
-        var gridService = new GridService();
-        gridService.Setup();
-
-        ServiceLocator.RegisterService<GridService>(gridService);
-    }
-
-    private void InitializingGraphSearch()
-    {
-        var graphSearch = new GraphSearch();
-        ServiceLocator.RegisterService<GraphSearch>(graphSearch);
-    }
-
-    private void InitializingMovementSystem()
-    {
-        var movementSystem = new MovementSystem();
-        ServiceLocator.RegisterService<MovementSystem>(movementSystem);
-    }
-
-    private void InitilizingUnitManager(CombatManager combatManager)
-    {
-        var unitManager = UnitManager.Create(combatManager);
-        ServiceLocator.RegisterService<UnitManager>(unitManager);
-    }
-
-    private void CombatManagerInitialization() //this will change once Screem Manager is implementend
-    {
-        var combatManager = new CombatManager();
-        ServiceLocator.RegisterService<CombatManager>(combatManager);
-        InitilizingUnitManager(combatManager);
-    }
 }

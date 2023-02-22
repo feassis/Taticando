@@ -1,65 +1,28 @@
-using MVC.Controler.Combat;
+using MVC.Model.Elements;
+using MVC.Model.Unit;
 using MVC.View.Unit;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Tools;
 using UnityEngine;
 
-
-[CreateAssetMenu(fileName = "Element Application Config", menuName = "Configs/Elements/ApplicationConfig")]
-public class ElementApplicationConfig : ScriptableObject
+namespace MVC.Controller.Unit
 {
-    [SerializeField] private List<ElementApplicationAction> actionsOnElementApplication;
-
-    public void ActionOnApplication(UnitGraphics unit, ElementsEnum element)
+    [CreateAssetMenu(fileName = "Element Application Config", menuName = "Configs/Elements/Application Config")]
+    public class ElementApplicationConfig : ScriptableObject
     {
-        ElementApplicationAction elementAction = actionsOnElementApplication.Find(e => e.Element == element);
+        [SerializeField] private List<ElementApplicationAction> actionsOnElementApplication;
 
-        if(elementAction == null)
+        public void ActionOnApplication(UnitGraphics unit, ElementsEnum element)
         {
-            return;
-        }
+            ElementApplicationAction elementAction = actionsOnElementApplication.Find(e => e.Element == element);
 
-        elementAction.ExecuteElementApplicationActions(unit);
+            if (elementAction == null)
+            {
+                return;
+            }
+
+            elementAction.ExecuteElementApplicationActions(unit);
+        }
     }
 }
 
-[Serializable]
-public class ElementApplicationAction
-{
-    public ElementsEnum Element;
-    public List<ActionByTeam> ActionsByTeam; 
 
-    public int ExecuteElementApplicationActions(UnitGraphics unit)
-    {
-        var team = ServiceLocator.GetService<CombatManager>().GetTeamOfAUnit(unit);
-        var teamAction = ActionsByTeam.Find(a => a.Team == team);
-
-        if(teamAction == null)
-        {
-            return -1;
-        }
-
-        return teamAction.ExecuteActions(unit);
-    }
-}
-
-[Serializable]
-public class ActionByTeam
-{
-    public TeamEnum Team;
-    public List<UnitAction> Actions;
-    
-    public int ExecuteActions(UnitGraphics unit)
-    {
-        int actionsAcumulatedValue = 0;
-
-        foreach (var action in Actions)
-        {
-            actionsAcumulatedValue += action.Execute(unit);
-        }
-
-        return actionsAcumulatedValue;
-    }
-}

@@ -1,99 +1,136 @@
-﻿using System;
+﻿using MVC.Model.Combat;
+using MVC.Model.Elements;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitModel
+namespace MVC.Model.Unit
 {
-    [SerializeField] private int maxHp = 10;
-    [SerializeField] private int movementPoints = 20;
-    [SerializeField] private int actionPoints = 1;
-
-    private int currentMovementpoints = 20;
-    private int currentActionpoints = 1; 
-    private int currentHP = 10;
-
-    private int shield;
-
-    private int attackPower = 1;
-
-    private ElementsModel elements = new ElementsModel();
-    private TeamEnum team;
-
-    public int GetAttackPowuer() => attackPower;
-    public TeamEnum GetTeam() => team;
-    public Action<int, int> OnDamageReceived;
-    public Action<int> OnShieldChanged;
-
-    public UnitModel(TeamEnum team)
+    public class UnitModel
     {
-        this.team = team;
-    }
+        [SerializeField] private int maxHp = 10;
+        [SerializeField] private int movementPoints = 20;
+        [SerializeField] private int actionPoints = 1;
 
-    public void ResetUnitTurn()
-    {
-        currentMovementpoints = movementPoints;
-        currentActionpoints = actionPoints;
-        currentHP = maxHp;
-    }
+        [SerializeField] private List<UnitStatus> unitStatus = new List<UnitStatus> 
+            { 
+                new UnitStatus(ActionType.StrongAction, 10), 
+                new UnitStatus(ActionType.NormalAction, 5), 
+                new UnitStatus(ActionType.WeakAction, 1), 
+            };
 
-    public void ApplyElement(ElementsEnum elementType, int charges)
-    {
-        elements.AddElement(elementType, charges);
-    }
+        private int currentMovementpoints = 20;
+        private int currentActionpoints = 1;
+        private int currentHP = 10;
 
-    public ElementsEnum GetElementsOnUnit()
-    {
-        return elements.Elements;
-    }
+        private int shield;
+        public int GetCurrentShield() => shield;
 
-    public bool HasActionsToDo()
-    {
-        return actionPoints > 0;
-    }
+        private ElementsModel elements = new ElementsModel();
+        private TeamEnum team;
 
-    public void GainShield(int amount)
-    {
-        shield += amount;
-        OnShieldChanged?.Invoke(shield);
-    }
+        public TeamEnum GetTeam() => team;
+        public Action<int, int> OnDamageReceived;
+        public Action<int, int> OnHealReceived;
+        public Action<int> OnShieldChanged;
 
-    public int GetCurrentMovementPoints()
-    {
-        return currentMovementpoints;
-    }
+        public UnitModel(TeamEnum team)
+        {
+            this.team = team;
+        }
 
-    public void SpentMovementPoints(int cost)
-    {
-        currentMovementpoints -= cost;
-    }
+        public float GetActionModifier(ActionType type)
+        {
+            var status = unitStatus.Find(s => s.Type == type);
 
-    public void SpentActionPoints(int cost)
-    {
-        actionPoints -= cost;
-    }
+            if(status == null)
+            {
+                throw new Exception($"unit doen't have type {type}");
+            }
 
-    public int GetMaxHp() => maxHp;
-    public int GetCurrentHP() => currentHP;
+            return status.Stat;
+        }
 
-    public (int damageToShield, int remainingDamage) DamageShield(int dmg)
-    {
-        int damageToShield = Mathf.Clamp(dmg, 0, shield);
+        public void ResetUnitTurn()
+        {
+            currentMovementpoints = movementPoints;
+            currentActionpoints = actionPoints;
+            currentHP = maxHp;
+        }
 
-        shield -= damageToShield;
+        public void ApplyElement(ElementsEnum elementType, int charges)
+        {
+            elements.AddElement(elementType, charges);
+        }
 
-        int remainingDamage = dmg - damageToShield > 0 ? dmg - damageToShield : 0;
+        public ElementsEnum GetElementsOnUnit()
+        {
+            return elements.Elements;
+        }
 
-        OnShieldChanged?.Invoke(shield);
+        public bool HasActionsToDo()
+        {
+            return actionPoints > 0;
+        }
 
-        return (damageToShield, remainingDamage);
-    }
+        public void GainShield(int amount)
+        {
+            shield += amount;
+            OnShieldChanged?.Invoke(shield);
+        }
 
-    public int ApplyDamage(int dmg)
-    {
-        currentHP -= dmg;
-        Mathf.Clamp(currentHP, 0, maxHp);
+        public int GetCurrentMovementPoints()
+        {
+            return currentMovementpoints;
+        }
 
-        OnDamageReceived?.Invoke(currentHP, maxHp);
+        public void SpentMovementPoints(int cost)
+        {
+            currentMovementpoints -= cost;
+        }
 
-        return dmg;
+        public void SpentActionPoints(int cost)
+        {
+            actionPoints -= cost;
+        }
+
+        public int GetMaxHp() => maxHp;
+        public int GetCurrentHP() => currentHP;
+
+        public (int damageToShield, int remainingDamage) DamageShield(int dmg)
+        {
+            int damageToShield = Mathf.Clamp(dmg, 0, shield);
+
+            shield -= damageToShield;
+
+            int remainingDamage = dmg - damageToShield > 0 ? dmg - damageToShield : 0;
+
+            OnShieldChanged?.Invoke(shield);
+
+            return (damageToShield, remainingDamage);
+        }
+
+        public int ApplyDamage(int dmg)
+        {
+            (int damageToShield, int remainingDamage) dmgAfterShield = DamageShield(dmg);
+
+            currentHP -= dmgAfterShield.remainingDamage;
+            currentHP = Mathf.Clamp(currentHP, 0, maxHp);
+
+            OnDamageReceived?.Invoke(currentHP, maxHp);
+
+            return dmgAfterShield.remainingDamage;
+        }
+
+        public int Heal(int amount)
+        {
+            int startHp = currentHP;
+            currentHP = Mathf.Clamp(currentHP + amount, 0, maxHp);
+
+            OnHealReceived?.Invoke(currentHP, maxHp);
+
+            return currentHP == maxHp ? maxHp - startHp : amount;
+        }
     }
 }
+

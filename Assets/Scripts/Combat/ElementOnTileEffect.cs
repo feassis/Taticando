@@ -1,21 +1,27 @@
-﻿using System;
+﻿using MVC.Model.Combat;
+using MVC.Model.Elements;
+using System;
 using System.Collections.Generic;
 
-[Serializable]
-public class ElementOnTileEffect
+namespace MVC.Controller.Elements
 {
-    public ElementsEnum Element;
-    public List<TileEffectByTeam> EffectByTeam;
-
-    public int GetTileCostAfterEffect(int defaultCost, TeamEnum team)
+    [Serializable]
+    public class ElementOnTileEffect
     {
-        var desiredTileEffect = EffectByTeam.Find(t => t.Team == team);
+        public ElementsEnum Element;
+        public List<TileEffectByTeam> EffectByTeam;
 
-        if(desiredTileEffect == null)
+        public int GetTileCostAfterEffect(int defaultCost, TeamEnum team)
         {
-            return defaultCost;
-        }
+            var desiredTileEffect = EffectByTeam.Find(t => t.Team == team);
 
-        return desiredTileEffect.GetTileCostAfterEffect(defaultCost);
+            if (desiredTileEffect == null)
+            {
+                return defaultCost;
+            }
+
+            return desiredTileEffect.GetTileCostAfterEffect(defaultCost);
+        }
     }
 }
+

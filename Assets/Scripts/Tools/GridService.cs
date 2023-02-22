@@ -1,56 +1,63 @@
-﻿using System;
+﻿using MVC.Model.Combat;
+using MVC.Model.Elements;
+using MVC.Model.Tile;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridService
+namespace MVC.Controller.Grid
 {
-    Dictionary<Vector3Int, TileModel> tileDict = new Dictionary<Vector3Int, TileModel>();
-
-    public Action OnElementApplied;
-
-    public void Setup()
+    public class GridService
     {
-        
-    }
+        Dictionary<Vector3Int, TileModel> tileDict = new Dictionary<Vector3Int, TileModel>();
 
-    public void AddTile(Vector3Int position, TileType type)
-    {
-        if (tileDict.ContainsKey(position))
+        public Action OnElementApplied;
+
+        public void Setup()
         {
-            Debug.LogError($"already exists tile at {position}");
-            return;
+
         }
 
-        tileDict.Add(position, new TileModel(type));
-    }
-
-    public void ApplyElementToTiles(List<Vector3Int> positions, ElementsEnum element)
-    {
-        foreach (var pos in positions)
+        public void AddTile(Vector3Int position, TileType type)
         {
-            if(tileDict[pos] == null)
+            if (tileDict.ContainsKey(position))
             {
-                continue;
+                Debug.LogError($"already exists tile at {position}");
+                return;
             }
 
-            tileDict[pos].ApplyElement(element);
+            tileDict.Add(position, new TileModel(type));
         }
 
-        OnElementApplied?.Invoke();
-    }
+        public void ApplyElementToTiles(List<Vector3Int> positions, ElementsEnum element)
+        {
+            foreach (var pos in positions)
+            {
+                if (tileDict[pos] == null)
+                {
+                    continue;
+                }
 
-    public bool IsTileAfflictedByElement(Vector3Int position, ElementsEnum element)
-    {
-        return tileDict[position].IsTileAfflictedByElement(element);
-    }
+                tileDict[pos].ApplyElement(element);
+            }
 
-    public int GetTileCost(Vector3Int position, TeamEnum team)
-    {
-        return tileDict[position].GetCost(team);
-    }
+            OnElementApplied?.Invoke();
+        }
 
-    public bool IsTileAnObstacle(Vector3Int position)
-    {
-        return tileDict[position].IsObstacle(); 
+        public bool IsTileAfflictedByElement(Vector3Int position, ElementsEnum element)
+        {
+            return tileDict[position].IsTileAfflictedByElement(element);
+        }
+
+        public int GetTileCost(Vector3Int position, TeamEnum team)
+        {
+            return tileDict[position].GetCost(team);
+        }
+
+        public bool IsTileAnObstacle(Vector3Int position)
+        {
+            return tileDict[position].IsObstacle();
+        }
     }
 }
+

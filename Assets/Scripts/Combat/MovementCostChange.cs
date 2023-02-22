@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Movement Cost Change", menuName = "Configs/Elements/Tile Effects/Movement Cost Change")]
-public class MovementCostChange : TileEffect
+namespace MVC.Controller.Tile
 {
-    [SerializeField] private float changeMovementValueBy;
-
-    public override int GetTileCost(int currentCost)
+    [CreateAssetMenu(fileName = "Movement Cost Change", menuName = "Configs/Elements/Tile Effects/Movement Cost Change")]
+    public class MovementCostChange : TileEffect
     {
-        return Mathf.FloorToInt(changeMovementValueBy * currentCost);
+        [SerializeField] private float changeMovementValueBy;
+
+        public override int GetTileCost(int currentCost)
+        {
+            return Mathf.FloorToInt(changeMovementValueBy * currentCost);
+        }
     }
-} 
+}
+
+
