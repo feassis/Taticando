@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d61c528e3c6814ea528ce0b16780de, type: 3}
+  m_Name: ElementOnDamageApplicationConfig
+  m_EditorClassIdentifier: 
+  DamageEffects:
+  - Team: 0
+    DamageEffects:
+    - {fileID: 11400000, guid: 1fc54b13c64b43640a47560f1d1f8e0d, type: 2}
+    - {fileID: 11400000, guid: 42e2f82e3ded80241a84331f11882252, type: 2}
+  - Team: 1
+    DamageEffects:
+    - {fileID: 11400000, guid: 1fc54b13c64b43640a47560f1d1f8e0d, type: 2}
+    - {fileID: 11400000, guid: 42e2f82e3ded80241a84331f11882252, type: 2}
