@@ -16,6 +16,11 @@ namespace Tools
             SetupCombatScene();
         }
 
+        public void OpenPartySetupScene()
+        {
+            SceneManager.LoadScene("PartySetupScene");
+        }
+
         private void SetupCombatScene()
         {
             CombatManagerInitialization();

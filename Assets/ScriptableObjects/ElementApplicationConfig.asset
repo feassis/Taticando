@@ -16,7 +16,8 @@ MonoBehaviour:
   - Element: 2
     ActionsByTeam:
     - Team: 0
-      Actions: []
+      Actions:
+      - {fileID: 11400000, guid: bdba096cdd704274bbfa0766ba741dd5, type: 2}
     - Team: 1
       Actions:
       - {fileID: 11400000, guid: d89059d8311ecaa49ba271d484f43fc4, type: 2}

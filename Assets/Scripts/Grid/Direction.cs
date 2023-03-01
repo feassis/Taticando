@@ -55,7 +55,7 @@ namespace MVC.Controller.Grid
 
         public static List<Vector3Int> GetDirectionList(NeighbourhoodType type) => type switch
         {
-            NeighbourhoodType.Cross => DirectionCrossNeighbourhood,
+            NeighbourhoodType.Radial => DirectionCrossNeighbourhood,
             NeighbourhoodType.LineUp => LineUp,
             NeighbourhoodType.LineDown => LineDown,
             NeighbourhoodType.LineRight => LineRight,
