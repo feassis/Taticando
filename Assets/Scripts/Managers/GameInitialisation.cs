@@ -28,16 +28,24 @@ namespace MVC.Controller.Inicialization
             SceneManagerInitialization();
             PlayButton.onClick.AddListener(OnPlayButtonClicked);
             QuitButton.onClick.AddListener(OnQuitButtonClicked);
-
-            await InitializeUnitLibrary();
+            
+            var unitLibraryService = await InitializeUnitLibrary();
+            InitializePlayerService(unitLibraryService);
 
             TurnOnButton();
         }
 
-        private async Task InitializeUnitLibrary()
+        private void InitializePlayerService(UnitLibraryService unitLibraryService)
+        {
+            var playerService = new PlayerService(unitLibraryService);
+            ServiceLocator.RegisterService<PlayerService>(playerService);
+        }
+
+        private async Task<UnitLibraryService> InitializeUnitLibrary()
         {
             var unitLivraryService = await UnitLibraryService.Create();
             ServiceLocator.RegisterService<UnitLibraryService>(unitLivraryService);
+            return unitLivraryService;
         }
 
         private void TurnOnButton()

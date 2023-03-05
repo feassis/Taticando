@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using Tools;
 
 namespace MVC.View.UI
 {
-    public class AreaOfEffectDisplayerGraphics : MonoBehaviour
+    public class AreaOfEffectDisplayerGraphics : DragableSkillPartySceneGraphics, IDropHandler
     {
         [SerializeField] private Image areaOfEffectImage;
         [SerializeField] private GameObject centralPlasyerIndication;
@@ -26,11 +28,24 @@ namespace MVC.View.UI
             public Sprite AreaOfEffectIcon;
         }
 
-        public void Setup(Controller.Unit.ActionRangeInfo rangeInfo)
+        public void Setup(Controller.Unit.ActionRangeInfo rangeInfo, Transform canvasTransform)
         {
             SetupPlayerIndication(rangeInfo.ActionDistance, rangeInfo.ActionRangeAmount);
 
             SetupAreaOfEffect(rangeInfo);
+
+            this.canvasTransform = canvasTransform;
+        }
+
+        public override void UpdateGraphics()
+        {
+            base.UpdateGraphics();
+
+            var playerService = ServiceLocator.GetService<PlayerService>();
+
+            var skill = (AreaOfEffectSkill) playerService.GetSkillByItsDragable(this);
+
+            SetupAreaOfEffect(skill.RangeInfo);
         }
 
         private void SetupAreaOfEffect(Controller.Unit.ActionRangeInfo rangeInfo)
@@ -61,6 +76,17 @@ namespace MVC.View.UI
             }
 
             outerPlasyerIndication.SetActive(true);
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            var playerService = ServiceLocator.GetService<PlayerService>();
+            var partySceneGraphics = ServiceLocator.GetService<PartySetupSceneGraphics>();
+
+            var skillBeingDraged = partySceneGraphics.GetSkillBeingDraged();
+
+            playerService.SwapDragableSkill(skillBeingDraged, this);
+            ServiceLocator.GetService<PartySetupSceneGraphics>().DeregisterSkillBeingDraged();
         }
     }
 }

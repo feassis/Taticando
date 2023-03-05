@@ -801,6 +801,7 @@ GameObject:
   - component: {fileID: 8155014650774747521}
   - component: {fileID: 8155014650774747520}
   - component: {fileID: 5955911543095070082}
+  - component: {fileID: 7315996250536891778}
   m_Layer: 5
   m_Name: AreaOfEffecDisplayer
   m_TagString: Untagged
@@ -884,6 +885,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6bdd723c0febf3428bb0b64957fc947, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SkillType: 0
+  skillIcon: {fileID: 8155014650774747520}
+  skillDescription: {fileID: 8155014652088856043}
+  dragingImagePrefab: {fileID: 6071383454742242929, guid: a1dfdfcc893071a43ac6b1abd4b287f8,
+    type: 3}
+  canvasGroup: {fileID: 7315996250536891778}
   areaOfEffectImage: {fileID: 8155014650774747520}
   centralPlasyerIndication: {fileID: 803392914787628352}
   insidePlasyerIndication: {fileID: 2834113193178532684}
@@ -895,6 +902,18 @@ MonoBehaviour:
     AreaOfEffectIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   - NeighbourhoodType: 5
     AreaOfEffectIcon: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!225 &7315996250536891778
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8155014650774747526}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8155014652088856041
 GameObject:
   m_ObjectHideFlags: 0

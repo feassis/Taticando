@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 6fc7bb54b049ad049ba58208777d321c, type: 3}
   m_Name: Unit Library
-  m_EditorClassIdentifier: Assembly-CSharp:MVC.Model.Unit:UnitLibrary
+  m_EditorClassIdentifier: 
   units:
-  - {fileID: 11400000, guid: 320065b745048fb41ab134e766d440de, type: 2}
-  - {fileID: 11400000, guid: c7f6bf659b93c4141be5fd9b994303d9, type: 2}
   - {fileID: 11400000, guid: e5fe1a84d4799234f988c84de635639b, type: 2}
   - {fileID: 11400000, guid: 8960500a7d1ddd7408f10860108bfcee, type: 2}
+  - {fileID: 11400000, guid: c7f6bf659b93c4141be5fd9b994303d9, type: 2}
+  - {fileID: 11400000, guid: 320065b745048fb41ab134e766d440de, type: 2}

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using MVC.Model.Elements;
+using Tools;
 
 namespace MVC.View.UI
 {
@@ -15,13 +16,25 @@ namespace MVC.View.UI
         [SerializeField] private TextMeshProUGUI descriptionText;
         [SerializeField] private AreaOfEffectDisplayerGraphics areaOfEffectDisplay;
 
-        public void Setup(Sprite characterSprite, ElementsEnum element, 
-            string description, Controller.Unit.ActionRangeInfo rangeInfo)
+        private Transform canvasTransform;
+
+        public void Setup(PlayerUnit unit, Transform canvasTransform)
         {
-            characterImage.sprite = characterSprite;
-            elementText.text = element.ToString();
-            descriptionText.text = description;
-            areaOfEffectDisplay.Setup(rangeInfo);
+            characterImage.sprite = unit.CharacterSprite;
+            elementText.text = unit.PrimaryElement.ToString();
+            descriptionText.text = unit.CharacterDescription;
+            areaOfEffectDisplay.Setup(unit.RangeInfo, canvasTransform);
+
+            var skill = ServiceLocator.GetService<PlayerService>().GetSkillByUnitAndType(unit, 
+                Controller.Combat.SkillTypeEnum.AreaOfEffect);
+            skill.PartyDragable = areaOfEffectDisplay;
+
+            this.canvasTransform = canvasTransform;
+        }
+
+        public AreaOfEffectDisplayerGraphics GetAreaOfEffectDisplay()
+        {
+            return areaOfEffectDisplay;
         }
     }
 }
