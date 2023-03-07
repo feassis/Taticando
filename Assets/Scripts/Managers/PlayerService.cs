@@ -60,23 +60,28 @@ public class PlayerService
     public void SwapDragableSkill(MVC.View.UI.DragableSkillPartySceneGraphics dragable1, 
         MVC.View.UI.DragableSkillPartySceneGraphics dragable2)
     {
-        MVC.View.UI.DragableSkillPartySceneGraphics tempDrag = dragable2;
-
+        
         var skill1 = GetSkillByItsDragable(dragable1);
-        var skill2 = GetSkillByItsDragable(dragable2);
+        Skill skill2 = GetSkillByItsDragable(dragable2);
 
         if(skill1.Type != skill2.Type)
         {
             return;
         }
 
-        skill2.PartyDragable = dragable1;
-        skill2.PartyDragable.SetSkillIcon(tempDrag.GetSkillIcon());
-        skill2.PartyDragable.SetSkillDescription(tempDrag.GetSkillDescription());
+        var drag1Image = dragable1.GetSkillIcon();
+        var drag1Description = dragable1.GetSkillDescription();
+        var drag2Image = dragable2.GetSkillIcon();
+        var drag2Description = dragable2.GetSkillDescription();
 
-        skill1.PartyDragable = tempDrag;
-        skill1.PartyDragable.SetSkillIcon(dragable1.GetSkillIcon());
-        skill1.PartyDragable.SetSkillDescription(dragable1.GetSkillDescription());
+        skill2.PartyDragable = dragable1;
+
+        skill1.PartyDragable = dragable2;
+
+        skill1.PartyDragable.SetSkillDescription(drag1Description);
+        skill1.PartyDragable.SetSkillIcon(drag1Image);
+        skill2.PartyDragable.SetSkillDescription(drag2Description);
+        skill2.PartyDragable.SetSkillIcon(drag2Image);
 
         skill1.UpdateDragable();
         skill2.UpdateDragable();

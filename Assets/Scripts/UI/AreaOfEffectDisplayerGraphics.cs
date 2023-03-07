@@ -16,6 +16,7 @@ namespace MVC.View.UI
         [SerializeField] private GameObject centralPlasyerIndication;
         [SerializeField] private GameObject insidePlasyerIndication;
         [SerializeField] private GameObject outerPlasyerIndication;
+        [SerializeField] private GameObject highLight;
         [SerializeField] private TextMeshProUGUI offsetText;
         [SerializeField] private TextMeshProUGUI radiousText;
 
@@ -44,7 +45,9 @@ namespace MVC.View.UI
             var playerService = ServiceLocator.GetService<PlayerService>();
 
             var skill = (AreaOfEffectSkill) playerService.GetSkillByItsDragable(this);
+            areaOfEffectImage.sprite = skillIcon.sprite;
 
+            SetupPlayerIndication(skill.RangeInfo.ActionDistance, skill.RangeInfo.ActionRangeAmount);
             SetupAreaOfEffect(skill.RangeInfo);
         }
 
@@ -87,6 +90,11 @@ namespace MVC.View.UI
 
             playerService.SwapDragableSkill(skillBeingDraged, this);
             ServiceLocator.GetService<PartySetupSceneGraphics>().DeregisterSkillBeingDraged();
+        }
+
+        public void ToggleHighlight(bool isOn)
+        {
+            highLight.SetActive(isOn);
         }
     }
 }

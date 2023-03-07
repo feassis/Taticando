@@ -49,6 +49,14 @@ namespace MVC.View.UI
             ServiceLocator.GetService<SceneService>().OpenTestScene();
         }
 
+        public void HighlightReleventDragableAreas(Controller.Combat.SkillTypeEnum type, bool isOn)
+        {
+            foreach (var character in Characters)
+            {
+                character.HighlightReleventDragableAreas(type, isOn);
+            }
+        }
+
         private void SetupCharacters()
         {
             var playerService = ServiceLocator.GetService<PlayerService>();

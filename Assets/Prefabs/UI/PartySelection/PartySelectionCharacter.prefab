@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 2991939172273114092}
   - component: {fileID: 2991939172273114066}
   - component: {fileID: 2991939172273114067}
+  - component: {fileID: 5151330192515201518}
   m_Layer: 5
   m_Name: ElementHolder
   m_TagString: Untagged
@@ -154,6 +155,29 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5151330192515201518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2991939172273114093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 679ed46b866e743418e914756ada8d6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iconImage: {fileID: 2991939171293385332}
+  elementName: {fileID: 2991939172942270201}
+  elementIcons:
+  - Element: 1
+    Elementicon: {fileID: 1472233671, guid: 954434b6e7199aa42a098a147be8192e, type: 3}
+  - Element: 2
+    Elementicon: {fileID: 1086332925, guid: 954434b6e7199aa42a098a147be8192e, type: 3}
+  - Element: 4
+    Elementicon: {fileID: -846913617, guid: 954434b6e7199aa42a098a147be8192e, type: 3}
+  - Element: 5
+    Elementicon: {fileID: -103833200, guid: 954434b6e7199aa42a098a147be8192e, type: 3}
 --- !u!1 &2991939172315319891
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,7 +444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterImage: {fileID: 2991939172315319889}
   elementImage: {fileID: 2991939171293385332}
-  elementText: {fileID: 2991939172942270201}
+  elementIconGraphics: {fileID: 5151330192515201518}
   descriptionText: {fileID: 4449432042842637401}
   areaOfEffectDisplay: {fileID: 724599823155346989}
 --- !u!1 &7654281514334164428

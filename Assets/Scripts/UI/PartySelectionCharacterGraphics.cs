@@ -12,7 +12,7 @@ namespace MVC.View.UI
     {
         [SerializeField] private Image characterImage;
         [SerializeField] private Image elementImage;
-        [SerializeField] private TextMeshProUGUI elementText;
+        [SerializeField] private ElementIconGraphics elementIconGraphics;
         [SerializeField] private TextMeshProUGUI descriptionText;
         [SerializeField] private AreaOfEffectDisplayerGraphics areaOfEffectDisplay;
 
@@ -21,7 +21,7 @@ namespace MVC.View.UI
         public void Setup(PlayerUnit unit, Transform canvasTransform)
         {
             characterImage.sprite = unit.CharacterSprite;
-            elementText.text = unit.PrimaryElement.ToString();
+            elementIconGraphics.Setup(unit.PrimaryElement);
             descriptionText.text = unit.CharacterDescription;
             areaOfEffectDisplay.Setup(unit.RangeInfo, canvasTransform);
 
@@ -36,6 +36,17 @@ namespace MVC.View.UI
         {
             return areaOfEffectDisplay;
         }
+
+        public void HighlightReleventDragableAreas(Controller.Combat.SkillTypeEnum type, bool isOn)
+        {
+            switch (type)
+            {
+                case Controller.Combat.SkillTypeEnum.AreaOfEffect:
+                    areaOfEffectDisplay.ToggleHighlight(isOn);
+                    break;
+                case Controller.Combat.SkillTypeEnum.Element:
+                    break;
+            }
+        }
     }
 }
-

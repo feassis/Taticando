@@ -66,9 +66,14 @@ namespace MVC.View.UI
         {
             dragingImage = Instantiate(dragingImagePrefab, canvasTransform);
             dragingImage.rectTransform.position = eventData.position;
+            dragingImage.sprite = skillIcon.sprite;
 
-            ServiceLocator.GetService<PartySetupSceneGraphics>().RegisterSkillBeingDraged(this);
+            var partyScene = ServiceLocator.GetService<PartySetupSceneGraphics>();
+
+            partyScene.RegisterSkillBeingDraged(this);
+            partyScene.HighlightReleventDragableAreas(SkillType, true);
             SetupAlpha(0.5f);
+
         }
 
         public virtual void Setup(Sprite icon, string description, Transform canvasTransform)
@@ -87,6 +92,9 @@ namespace MVC.View.UI
         {
             Destroy(dragingImage.gameObject);
             dragingImage = null;
+
+            var partyScene = ServiceLocator.GetService<PartySetupSceneGraphics>();
+            partyScene.HighlightReleventDragableAreas(SkillType, false);
 
             SetupAlpha(1f);
         }
