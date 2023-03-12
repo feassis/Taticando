@@ -50,7 +50,7 @@ namespace MVC.Controller.Movement
             movementRange = new BFSResult();
             var graphSearchService = ServiceLocator.GetService<GraphSearch>();
             movementRange = graphSearchService.BFSGetRange(grid,
-                grid.GetClosestTile(selectedUnit.transform.position), selectedUnit.MovementPoints, NeighbourhoodType.Cross, team);
+                grid.GetClosestTile(selectedUnit.transform.position), selectedUnit.MovementPoints, NeighbourhoodType.Radial, team);
         }
 
         public void ShowPath(Vector3Int selectedHexPosition, IGrid grid, TeamEnum team)

@@ -9,6 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/GameStartupScene.unity
     guid: 7fcdffce6d4cc0649994904bbaf7abc2
   - enabled: 1
+    path: Assets/Scenes/PartySetupScene.unity
+    guid: 14f49d5bb55e9d145b296c114c722806
+  - enabled: 1
     path: Assets/Scenes/TilemapTest.unity
     guid: 5a5ebb314fa896d4b84ba7ca0be3dde4
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: d0ef64479e17d72408ad15dd06ec7454,
+      type: 2}

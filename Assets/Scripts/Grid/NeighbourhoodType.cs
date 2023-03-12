@@ -2,7 +2,7 @@
 {
     public enum NeighbourhoodType
     {
-        Cross = 0,
+        Radial = 0,
         LineUp = 1,
         LineDown = 2,
         LineRight = 3,

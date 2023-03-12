@@ -3,22 +3,65 @@ using MVC.Controller.Graph;
 using MVC.Controller.Grid;
 using MVC.Controller.Movement;
 using MVC.Controller.Unit;
+using System.Threading.Tasks;
 using Tools;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace MVC.Controller.Inicialization
 {
     public class GameInitialisation : MonoBehaviour
     {
+        [SerializeField] private Button QuitButton;
+        [SerializeField] private Button PlayButton;
+
         private void Awake()
+        {
+            InitializeServices();
+        }
+
+        private async void InitializeServices()
         {
             InitializeGridService();
             InitializingGraphSearch();
             InitializingMovementSystem();
             SceneManagerInitialization();
+            PlayButton.onClick.AddListener(OnPlayButtonClicked);
+            QuitButton.onClick.AddListener(OnQuitButtonClicked);
+            
+            var unitLibraryService = await InitializeUnitLibrary();
+            InitializePlayerService(unitLibraryService);
 
-            ServiceLocator.GetService<SceneService>().OpenTestScene();
+            TurnOnButton();
+        }
+
+        private void InitializePlayerService(UnitLibraryService unitLibraryService)
+        {
+            var playerService = new PlayerService(unitLibraryService);
+            ServiceLocator.RegisterService<PlayerService>(playerService);
+        }
+
+        private async Task<UnitLibraryService> InitializeUnitLibrary()
+        {
+            var unitLivraryService = await UnitLibraryService.Create();
+            ServiceLocator.RegisterService<UnitLibraryService>(unitLivraryService);
+            return unitLivraryService;
+        }
+
+        private void TurnOnButton()
+        {
+            QuitButton.gameObject.SetActive(true);
+            PlayButton.gameObject.SetActive(true);
+        }
+
+        private void OnQuitButtonClicked()
+        {
+            Application.Quit();
+        }
+
+        private void OnPlayButtonClicked()
+        {
+            ServiceLocator.GetService<SceneService>().OpenPartySetupScene();
         }
 
         private void InitializeGridService()

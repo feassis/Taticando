@@ -4,11 +4,23 @@ using System;
 namespace MVC.Controller.Unit
 {
     [Serializable]
-    public struct ActionRangeInfo
+    public class ActionRangeInfo
     {
         public int ActionDistance;
         public NeighbourhoodType NeighbourhoodType;
         public int ActionRangeAmount;
+
+        public ActionRangeInfo()
+        {
+
+        }
+
+        public ActionRangeInfo(int actionDistance, NeighbourhoodType neighbourhoodType, int actionRangeAmount)
+        {
+            ActionDistance = actionDistance;
+            NeighbourhoodType = neighbourhoodType;
+            ActionRangeAmount = actionRangeAmount;
+        }
     }
 }
 
